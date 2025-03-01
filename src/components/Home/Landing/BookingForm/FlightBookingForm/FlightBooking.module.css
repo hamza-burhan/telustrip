@@ -1,0 +1,37 @@
+.customDropdownMenu {
+    width: 350px; /* Increase the width of the dropdown */
+    max-height: 300px; /* Optional: Limit height and make it scrollable */
+    overflow-y: auto;
+    padding: 0;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .customDropdownItem {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .customDropdownItem:hover {
+    background-color: #f8f9fa; /* Highlight on hover */
+    cursor: pointer;
+  }
+  
+  .customDropdownItem > .d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .customDropdownItem div {
+    font-size: 14px; /* Adjust font size if needed */
+  }
+  
+  .textEnd {
+    text-align: right;
+    color: #555;
+  }
+  

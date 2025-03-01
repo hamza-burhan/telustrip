@@ -1,0 +1,261 @@
+:root {
+  --dark-blue: #2b2355;
+  --primary-color: #f9f8f6;
+  --secondary-color: #202044;
+  --third-color: #f25149;
+  --fourth-color: #f5867b;
+  --fifth-color: rgb(145, 143, 146);
+  --six-color: #222248;
+
+  --text-color: #343a40;
+  --font-family: "Noto Sans Med", sans-serif;
+  --body-color: #f2f3fa;
+}
+.primary-color {
+  color: var(--primary-color);
+}
+.secondary-color {
+  color: var(--secondary-color);
+}
+.third-color {
+  color: var(--third-color);
+}
+
+body {
+  background-color: var(--background-color);
+}
+
+.third-color {
+  color: var(--third-color);
+}
+
+.menu-btn-box {
+  padding: 0px 20px;
+}
+.menu-btn {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.1rem;
+  color: #fff !important;
+}
+.top-bar-btn {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  color: var(--third-color) !important;
+  border: none;
+}
+.bg {
+  border-color: var(--third-color) !important;
+}
+.hover-line {
+  position: relative;
+  text-decoration: none !important;
+}
+
+.hover-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: var(--third-color); /* Bootstrap primary color */
+  transition: width 0.3s ease;
+}
+
+.hover-line:hover::after {
+  width: 100%;
+}
+
+.hover-line:hover::after {
+  width: 100%;
+}
+.btn-check:checked + .btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check) + .btn:active,
+.btn:hover {
+  color: var(--third-color);
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.booking-form {
+  width: 100%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 0px;
+  margin-top: -4%;
+  border-radius: 1rem 1rem 1rem 1rem;
+  /* overflow: hidden; */
+}
+.booking-form nav {
+  border-radius: 10px 10px 0px 0px;
+  overflow: hidden;
+}
+.booking-form .tab-content .tab-pane {
+  padding: 0px 20px;
+}
+.logo {
+  width: 150px;
+}
+.bi {
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+.silder {
+  width: 100%;
+}
+
+.nav-tabs {
+  display: flex;
+  width: 100%;
+}
+.nav-tabs .nav-link {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  font-family: var(--font-family);
+  font-weight: 300;
+}
+
+/* my customization start of form */
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .booking-tabs.active {
+  color: var(--dark-blue);
+  border: none;
+}
+.booking-tabs {
+  padding: 0.9rem 0.5rem 0.8rem;
+  color: var(--secondary-color);
+  background-color: #f1f2f9;
+  border-radius: 0px !important;
+  font-size: 18px;
+  font-weight: 600;
+}
+.nav-tabs .nav-link:focus,
+.nav-tabs .booking-tabs:hover {
+  color: #1f212b;
+}
+
+.tab-content {
+  background-color: #fff;
+  border-radius: 0px 0px 10px 10px;
+  padding: 20px;
+}
+/* Hide default radio */
+.form-check-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Custom radio container */
+.form-check-label {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+/* Custom radio circle */
+.form-check-label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #dee2e6;
+  border-radius: 50%;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+/* Custom radio dot */
+.form-check-label::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+/* Checked state */
+.form-check-input:checked ~ .form-check-label::before {
+  border-color: var(--dark-blue);
+  background: var(--dark-blue);
+}
+
+.form-check-input:checked ~ .form-check-label::after {
+  background: white;
+}
+
+/* Hover state */
+.form-check-label:hover::before {
+  border-color: var(--third-color);
+  transform: scale(1.1);
+}
+.border-flight {
+  border: 1px solid #dbdee8;
+  border-radius: 10px;
+}
+.third-color {
+  color: var(--third-color);
+}
+.h1 {
+  color: var(--six-color);
+  font-family: "Libre Baskerville";
+  font-size: 50px;
+  font-weight: 700;
+  font-style: normal;
+  text-align: center;
+}
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgb(255 216 214);
+}
+
+.light-color-text {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-style: normal;
+  text-align: center;
+  font-size: 19px;
+  color: var(--fourth-color);
+  margin: 0px;
+}
+.light-gray-color-text {
+  color: var(--fifth-color);
+  font-family: Inter;
+  font-size: 21px;
+  line-height: 152.381%;
+  font-weight: 500;
+  font-style: normal;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .booking-form {
+    padding: 0 12px;
+    margin-top: -8%;
+  }
+  .nav {
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .booking-form {
+    padding: 0 12px;
+    margin-top: -8%;
+  }
+  .nav {
+    text-align: center;
+  }
+}
