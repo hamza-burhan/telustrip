@@ -133,7 +133,7 @@ const FlightPriceCard = ({ label, price, onClick }) => (
   </div>
 );
 
-const FlightDetail = () => {
+const FlightDetail = ({activeDate}) => {
   const [expanded, setExpanded] = useState(null);
   const expandedRef = useRef(null);
   const router = useRouter();
@@ -164,9 +164,23 @@ const FlightDetail = () => {
       }, 200);
     }
   };
+  const formatActiveDate = (dateString) => {
+    const date = new Date(dateString); // Convert the string to a Date object
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  };
 
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && activeDate) {
       const flightData = Object.keys(router.query)
       .filter((key) => key.startsWith("from"))
       .map((key, index) => ({
@@ -175,9 +189,10 @@ const FlightDetail = () => {
         departureDate: router.query[`departureDate${index}`],
       }));
       const fetchFlights = async () => {
+        const formattedDate = formatActiveDate(activeDate);
         try {
           const response = await fetch(
-            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${flightData[0].departureDate}`
+            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${formattedDate}`
           );
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
@@ -191,7 +206,7 @@ const FlightDetail = () => {
       fetchFlights();
     }
     
-  }, [router.isReady]);
+  }, [router.isReady, activeDate]);
 
   return (
     <div>
@@ -246,7 +261,7 @@ const FlightDetail = () => {
                 <>
                   <div className="airport-code">{flight.connections[0].departure.airport || "Unknown Airport"}</div>
                   <div className="stop-duration">{flight.flight_type}, {flight.total_travel_time}</div>
-                  <div className="airport-code">{flight.connections[0].arrival.airport}</div>
+                  <div className="airport-code">{flight.connections[flight.connections.length - 1].arrival.airport}</div>
                 </>
               )}
             </div>
@@ -297,11 +312,11 @@ const FlightDetail = () => {
                   <li>
                     <FaSuitcase /> Type: {flight.baggage[0].type}
                   </li>
-                  {Economybenefits.map((benefit, index) => (
+                  {/* {Economybenefits.map((benefit, index) => (
                     <li key={index}>
                       {benefit.icon} {benefit.text}
                     </li>
-                  ))}
+                  ))} */}
                 </ul>
               </div>
               <div className="col-lg-6 expanded-content">
@@ -320,11 +335,11 @@ const FlightDetail = () => {
                   <li>
                     <FaSuitcase /> Type: {flight.baggage[1].type}
                   </li>
-                  {Businessbenefits.map((benefit, index) => (
+                  {/* {Businessbenefits.map((benefit, index) => (
                     <li key={index}>
                       {benefit.icon} {benefit.text}
                     </li>
-                  ))}
+                  ))} */}
                 </ul>
               </div>
             </div>
@@ -335,8 +350,8 @@ const FlightDetail = () => {
               <Offcanvas.Title>Flight Details</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <h2 className="fw-bold">Lahore to Doha</h2>
-              <p className="text-muted">{flight.arrival_date}</p>
+              <h2 className="fw-bold">{flight.starting_departure_city} to {flight.final_arrival_city}</h2>
+              <p className="text-muted">{formatDate(flight.arrival_date)}</p>
               <div className="flight-schedule-container mt-4">
                 <div className="flight-schedule">
                   <div className="departure-time">{flight.departure_date.split(" ")[1]}</div>

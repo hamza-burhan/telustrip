@@ -65,7 +65,12 @@ const FlightBookingForm = () => {
   const getFormattedDate = (date, formatStr) => format(date, formatStr);
 
   const handleCalendarChange = (index, date) => {
-    const formattedDate = new Date(date).toISOString().split("T")[0]; 
+    const localDate = new Date(date);
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(localDate.getDate()).padStart(2, "0");
+
+  const formattedDate = `${year}-${month}-${day}`;
     setFlights((prev) => {
       const updatedFlights = [...prev];
       updatedFlights[index].departureDate = formattedDate;
@@ -80,12 +85,15 @@ const FlightBookingForm = () => {
       from: flight.fromCode,
       to: flight.toCode,
       departureDate: flight.departureDate,
+      fromCity: flight.from,
+      toCity: flight.to,
     }));
-    console.log(submittedData);
     const query = submittedData.reduce((acc, flight, index) => {
       acc[`from${index}`] = flight.from;
       acc[`to${index}`] = flight.to;
       acc[`departureDate${index}`] = flight.departureDate;
+      acc[`fromCity${index}`] = flight.fromCity;
+      acc[`toCity${index}`] = flight.toCity;
       return acc;
     }, {});
     router.push({
