@@ -10,7 +10,8 @@ import {
 } from "react-icons/fa";
 import { useRouter } from "next/router";
 import Offcanvas from 'react-bootstrap/Offcanvas';
-
+import Modal from 'react-bootstrap/Modal';
+import styles from './FlightDetail.module.css';
 const Economybenefits = [
   {
     text: "Flexibility to make 1 change",
@@ -59,71 +60,6 @@ const Businessbenefits = [
   { text: "Upgrade with Avios", icon: <FaArrowUp /> },
 ]
 
-const flightDetails = {
-  Economy: {
-    title: "Great flexibility",
-    fareType: "Economy Convenience",
-    price: "224,106",
-    avios: "2,149 Avios",
-    Economybenefits: [
-      {
-        text: "Flexibility to make 1 change",
-        icon: <FaExchangeAlt />,
-      },
-      {
-        text: "Cancellation within 24hrs of booking without fees",
-        icon: <FaTimesCircle />,
-      },
-      { text: "Checked baggage: 30 kg", icon: <FaSuitcase /> },
-      {
-        text: "Hand baggage: 1 piece, 7 kg",
-        icon: <FaShoppingBag />,
-      },
-      {
-        text: "Standard Seat selection included",
-        icon: <FaChair />,
-      },
-      {
-        text: "Preferred Seat selection for a fee",
-        icon: <FaChair />,
-      },
-      { text: "Upgrade with Avios", icon: <FaArrowUp /> },
-    ],
-  },
-  Business: {
-    title: "Unlimited flexibility",
-    fareType: "Economy Comfort",
-    price: "305,106",
-    avios: "2,866 Avios",
-    Businessbenefits: [
-      {
-        text: "Flexibility to make unlimited changes",
-        icon: <FaExchangeAlt />,
-      },
-      {
-        text: "Cancel at anytime without fees",
-        icon: <FaTimesCircle />,
-      },
-      { text: "Checked baggage: 35 kg", icon: <FaSuitcase /> },
-      {
-        text: "Hand baggage: 1 piece, 7 kg",
-        icon: <FaShoppingBag />,
-      },
-      {
-        text: "Standard Seat selection included",
-        icon: <FaChair />,
-      },
-      {
-        text: "Preferred Seat selection included",
-        icon: <FaChair />,
-      },
-      { text: "Upgrade with Avios", icon: <FaArrowUp /> },
-    ],
-  },
-};
-
-
-
 const FlightPriceCard = ({ label, price, onClick }) => (
   <div className="economy-card " onClick={onClick}>
     <p className="economy-label">{label}</p>
@@ -140,13 +76,22 @@ const FlightDetail = ({activeDate}) => {
   const [flights, setFlights] = useState([]);
   const [queryParams, setQueryParams] = useState(null);
   const [selectedFlight, setSelectedFlight] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
 
-  const handleShow = (flight) => {
+  const handleConfirm = () => {
+    setShowModal(false);
+    router.push("/confirm-details"); 
+  }
+
+  const handleShowModal = (flight) => {
     console.log(" flight:", flight)
+    setSelectedFlight(flight);
+    setShowModal(true);
+  }
+  const handleShow = (flight) => {
     setSelectedFlight(flight);
     setShow(true);
   } 
@@ -299,11 +244,9 @@ const FlightDetail = ({activeDate}) => {
               <div className="col-lg-6 expanded-content">
                 <h2>Economy</h2>
                 <p className="price">PKR {flight.total_fare.toLocaleString("en-PK")}</p>
-                <button className="select-fare-btn">Select fare</button>
-                {/* <ul className="benefits-list">
-                  <li>Free Baggage: {flight.baggage[0]?.weight || 0} {flight.baggage[0]?.unit}</li>
-                  <li>Paid Baggage: {flight.baggage[1]?.pieces || 0} Piece(s)</li>
-                </ul> */}
+                <button className={styles.confirmFare} onClick={() => handleShowModal(flight)}>
+                  Select Fare
+                </button>
                 <p className="avios">Earn 2,866 Avios</p>
                 <ul className="benefits-list">
                   <li>
@@ -322,11 +265,7 @@ const FlightDetail = ({activeDate}) => {
               <div className="col-lg-6 expanded-content">
                 <h2>Business</h2>
                 <p className="price">PKR {(flight.total_fare * 1.5).toLocaleString("en-PK")}</p>
-                <button className="select-fare-btn">Select fare</button>
-                {/* <ul className="benefits-list">
-                  <li>Free Baggage: {flight.baggage[0]?.weight || 0} {flight.baggage[0]?.unit}</li>
-                  <li>Paid Baggage: {flight.baggage[1]?.pieces || 0} Piece(s)</li>
-                </ul> */}
+                <button className={styles.confirmFare}>Select Fare</button>
                 <p className="avios">Earn 2,866 Avios</p>
                 <ul className="benefits-list">
                   <li>
@@ -343,7 +282,6 @@ const FlightDetail = ({activeDate}) => {
                 </ul>
               </div>
             </div>
-            
           )}
           <Offcanvas show={show} onHide={handleClose} placement="end" backdrop={false} style={{width: '500px'}}>
             <Offcanvas.Header closeButton>
@@ -352,108 +290,68 @@ const FlightDetail = ({activeDate}) => {
             <Offcanvas.Body>
               <h2 className="fw-bold">{flight.starting_departure_city} to {flight.final_arrival_city}</h2>
               <p className="text-muted">{formatDate(flight.arrival_date)}</p>
-              <div className="flight-schedule-container mt-4">
-                <div className="flight-schedule">
-                  <div className="departure-time">{flight.departure_date.split(" ")[1]}</div>
-                  <div className="separator"></div>
-                  <div className="airline-info">
-                    <Image
-                      src="/assets/images/plane.png"
-                      alt="Airline Logo"
-                      width={20}
-                      height={20}
-                      className="airline-logo"
-                    />
+              {flight.connections.map((connection) => (
+                <>
+                  <div className="flight-schedule-container mt-4">
+                    <div className="flight-schedule">
+                      <div className="departure-time">{connection.departure.time.split(" ")[1]}</div>
+                      <div className="separator"></div>
+                      <div className="airline-info">
+                        <Image
+                          src="/assets/images/plane.png"
+                          alt="Airline Logo"
+                          width={20}
+                          height={20}
+                          className="airline-logo"
+                        />
+                      </div>
+                      <div className="separator"></div>
+                      <div className="arrival-time">
+                        {connection.arrival.time.split(" ")[1]}
+                      </div>
+                    </div>
                   </div>
-                  <div className="separator"></div>
-                  <div className="arrival-time">
-                  {flight.arrival_date.split(" ")[1]}<span className="next-day-indicator">+1</span>
+                  <div className="flight-meta">
+                      <>
+                        <div className="airport-code vstack gap-2">
+                          {connection.departure.city} 
+                          <span className="text-muted">{connection.departure.city} Airport ({connection.departure.airport} ) </span>
+                        </div>
+                        <div className="stop-duration">{connection.airline}, {connection.duration}</div>
+                        <div className="airport-code vstack gap-2">
+                          {connection.arrival.city} 
+                          <span className="text-muted">{connection.arrival.city} Airport ({connection.arrival.airport})</span>
+                        </div>
+                      </>
                   </div>
-                </div>
-              </div>
-              <div className="flight-meta">
-                {flight.connections?.length > 0 && (
-                  <>
-                    <div className="airport-code">{flight.connections[0].departure.airport || "Unknown Airport"}</div>
-                    <div className="stop-duration">{flight.flight_type}, {flight.total_travel_time}</div>
-                    <div className="airport-code">{flight.connections[0].arrival.airport}</div>
-                  </>
-                )}
-              </div>
+                </>
+              ))}
             </Offcanvas.Body>
           </Offcanvas>
+          <Modal
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            dialogClassName={styles.confirmModal}
+            aria-labelledby="example-custom-modal-styling-title"
+            backdrop={false}
+          >
+            <Modal.Body>
+              <div className="d-flex p-2 justify-content-between">
+                <div className="hstack gap-2">
+                  <span>
+                    <FaSuitcase />
+                  </span>
+                  <div className="vstack gap-2">
+                    <span className="text-muted">Departure selected</span>
+                    <h3>PKR {flight.total_fare}</h3>
+                  </div>
+                </div>
+                <button className={styles.confirmFare} onClick={handleConfirm}>Confirm</button>
+              </div>
+            </Modal.Body>
+          </Modal>
         </div>
       ))}
-        {/* <div
-          className={`row flight-container p-6 ${expanded ? "expanded" : ""}`}
-        >
-          <div className="col-lg-4">
-            <div className="flight-info">
-              <span className="qsuite">Qsuite</span>
-              <Image
-                src="/assets/images/info.svg"
-                alt="info-icon"
-                width={12}
-                height={12}
-              />
-            </div>
-            <FlightSchedule />
-            <div className="flight-meta">
-              <div className="airport-code">LHE</div>
-              <div className="stop-duration">1 Stop, 15h 55m</div>
-              <div className="airport-code">ISB</div>
-            </div>
-          </div>
-
-          <div className="col-lg-2"></div>
-
-          <div className="col-lg-3">
-            <FlightPriceCard
-              label="Economy"
-              price="224,106"
-              onClick={() => toggleExpand("Economy")}
-            />
-          </div>
-          <div className="col-lg-3">
-            <FlightPriceCard
-              label="Business"
-              price="305,106"
-              onClick={() => toggleExpand("Business")}
-            />
-          </div>
-          {expanded && (
-            <div className=" mt-4 col-lg-12 d-flex" ref={expandedRef}>
-              <div className="col-lg-6 expanded-content">
-                <h2>{flightDetails["Economy"].title}</h2>
-                <h3>{flightDetails["Economy"].fareType}</h3>
-                <p className="price">PKR {flightDetails["Economy"].price}</p>
-                <button className="select-fare-btn">Select fare</button>
-                <p className="avios">Earn {flightDetails["Economy"].avios}</p>
-                <ul className="benefits-list">
-                  {flightDetails["Economy"].benefits.map((benefit, index) => (
-                    <li key={index}>
-                      {benefit.icon} {benefit.text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="col-lg-6 expanded-content">
-                <h2>{flightDetails["Business"].title}</h2>
-                <h3>{flightDetails["Business"].fareType}</h3>
-                <p className="price">PKR {flightDetails["Business"].price}</p>
-                <button className="select-fare-btn">Select fare</button>
-                <p className="avios">Earn {flightDetails["Business"].avios}</p>
-                <ul className="benefits-list">
-                  {flightDetails["Business"].benefits.map((benefit, index) => (
-                    <li key={index}>
-                      {benefit.icon} {benefit.text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </div> */}
       </div>
     </div>
   );
