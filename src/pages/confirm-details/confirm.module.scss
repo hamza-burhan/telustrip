@@ -18,3 +18,17 @@
     background-color: #721d49;
     color: #fff;
 }
+
+.avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px; 
+    height: 35px;
+    background-color: #9d92c4;
+    color: white;
+    border-radius: 50%;
+    font-size: 15px; 
+    font-weight: bold; 
+  }
+  
