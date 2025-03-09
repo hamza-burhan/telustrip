@@ -93,7 +93,13 @@ const ConfirmationPage = () => {
     
             const data = await response.json();
             console.log('Passenger data submitted successfully:', data);
+            if (data?.original?.PNR) { 
+               
+                setShow(false);
     
+                
+                alert(`Booking Successful! Your PNR is: ${data.original.PNR}`);
+            }
             if (data.PNR) { 
                 router.push("/payment"); 
             }
