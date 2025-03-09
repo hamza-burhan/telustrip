@@ -81,10 +81,51 @@ const FlightDetail = ({activeDate}) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
-  const handleConfirm = () => {
+  // const handleConfirm = () => {
+  //   setShowModal(false);
+  //   router.push("/confirm-details"); 
+  // }
+  // changes by abdul start
+  const handleConfirm = async () => {
     setShowModal(false);
-    router.push("/confirm-details"); 
-  }
+    
+    if (selectedFlight) {
+        console.log('Confirming flight:', selectedFlight);
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/sabre/revalidate-flight', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    DepartureDateTime: selectedFlight.departure_date, 
+                    ArrivalDateTime: selectedFlight.arrival_date,
+                    OriginLocationCode: selectedFlight.departure_airport,
+                    DestinationLocationCode: selectedFlight.arrival_airport,
+                    ClassOfService: 'Y',
+                    FlightNumber: selectedFlight.flight_number,
+                    FlightType: 'A',
+                    AirlineCode: selectedFlight.airline
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Flight confirmed:', data);
+            router.push("/confirm-details");
+
+        } catch (error) {
+            console.error('Error confirming flight:', error);
+        }
+    }
+};
+
+  // changes by abdul end 
+
 
   const handleShowModal = (flight) => {
     console.log(" flight:", flight)
@@ -110,7 +151,7 @@ const FlightDetail = ({activeDate}) => {
     }
   };
   const formatActiveDate = (dateString) => {
-    const date = new Date(dateString); // Convert the string to a Date object
+    const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
     const day = String(date.getDate()).padStart(2, "0");
@@ -137,7 +178,7 @@ const FlightDetail = ({activeDate}) => {
         const formattedDate = formatActiveDate(activeDate);
         try {
           const response = await fetch(
-            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${formattedDate}`
+            `http://127.0.0.1:8000/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${formattedDate}`
           );
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
