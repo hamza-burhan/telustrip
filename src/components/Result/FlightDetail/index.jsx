@@ -116,6 +116,7 @@ const FlightDetail = ({activeDate}) => {
 
             const data = await response.json();
             console.log('Flight confirmed:', data);
+            localStorage.setItem('flightData', JSON.stringify(data));
             router.push("/confirm-details");
 
         } catch (error) {

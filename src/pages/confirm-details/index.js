@@ -18,6 +18,13 @@ const ConfirmationPage = () => {
         nationality: '',
     });
     const [formErrors, setFormErrors] = useState(false);
+    const [selectedFlight, setSelectedFlight] = useState(null);
+    useEffect(() => {
+        const flightData = localStorage.getItem('flightData');
+        if (flightData) {
+            setSelectedFlight(JSON.parse(flightData));
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,8 +57,49 @@ const ConfirmationPage = () => {
         setFormErrors(false);
     };
     
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
+        if (!validateForm()) {
+            setFormErrors(true);
+            setShow(true);
+            return;
+        }
+        setFormErrors(false);
+     
+        const passengerData = {
+            ...formData,
+            TicketType: '7TAW', 
+            DepartureDateTime: selectedFlight[0].departure_date,
+            FlightNumber: selectedFlight[0].flight_number,
+            DestinationLocationCode: selectedFlight[0].arrival_airport,
+            OriginLocationCode: selectedFlight[0].departure_airport,
+            ClassOfService: selectedFlight[0].cabin_class,
+            FlightType: selectedFlight[0].flight_type,
+            AirlineCode: selectedFlight[0].airline,
+            AmountSpecified: selectedFlight[0].total_fare
+        };
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/sabre/create-booking', { // Update the URL if it's different
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(passengerData),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+    
+            const data = await response.json();
+            console.log('Passenger data submitted successfully:', data);
+    
+            if (data.PNR) { 
+                router.push("/payment"); 
+            }
+        } catch (error) {
+            console.error('Error submitting passenger data:', error);
+        }
         console.log('Form Data:', formData);
     };
 
