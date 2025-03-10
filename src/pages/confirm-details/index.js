@@ -79,7 +79,7 @@ const ConfirmationPage = () => {
             AmountSpecified: selectedFlight[0].total_fare
         };
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/sabre/create-booking', { // Update the URL if it's different
+            const response = await fetch('https://telustrip.tutorialsbites.com/api/sabre/create-booking', { // Update the URL if it's different
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
