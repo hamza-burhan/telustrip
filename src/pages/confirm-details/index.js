@@ -96,8 +96,6 @@ const ConfirmationPage = () => {
             if (data?.original?.PNR) { 
                
                 setShow(false);
-    
-                
                 alert(`Booking Successful! Your PNR is: ${data.original.PNR}`);
             }
             if (data.PNR) { 
@@ -115,7 +113,6 @@ const ConfirmationPage = () => {
 
     return (
         <>
-            <Navbar isFixed={true} />
             <div className={styles.content}>
                 <div className="row">
                     <div className="col-8">

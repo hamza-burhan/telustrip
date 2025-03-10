@@ -134,6 +134,7 @@ const FlightDetail = ({activeDate}) => {
     setShowModal(true);
   }
   const handleShow = (flight) => {
+    console.log(" flight:", flight)
     setSelectedFlight(flight);
     setShow(true);
   } 
@@ -216,7 +217,7 @@ const FlightDetail = ({activeDate}) => {
         >
           <div className="col-lg-6 mb-3">
             <div className="flight-info">
-              <span className="qsuite">Qsuite</span>
+              <span className="qsuite">{flight.operating_airline}</span>
               <Image
                 src="/assets/images/info.svg"
                 alt="info-icon"
@@ -239,7 +240,7 @@ const FlightDetail = ({activeDate}) => {
                 </div>
                 <div className="separator"></div>
                 <div className="arrival-time">
-                {flight.arrival_date.split(" ")[1]}<span className="next-day-indicator">+1</span>
+                {flight.arrival_date.split(" ")[1]}<span className="next-day-indicator">+{flight.connections.length}</span>
                 </div>
               </div>
             </div>
@@ -265,20 +266,14 @@ const FlightDetail = ({activeDate}) => {
           </div>
 
           {/* Price Cards */}
-          <div className="col-lg-3">
+          <div className="col-lg-6">
             <FlightPriceCard
               label="Economy"
               price={flight.total_fare.toLocaleString("en-PK")}
               onClick={() => toggleExpand(index)}
             />
           </div>
-          <div className="col-lg-3">
-            <FlightPriceCard
-              label="Business"
-              price={(flight.total_fare * 1.5).toLocaleString("en-PK")} // Example: 1.5x for business class
-              onClick={() => toggleExpand(index)}
-            />
-          </div>
+         
 
           {/* Expanded Content */}
           {expanded === index && (
@@ -289,7 +284,6 @@ const FlightDetail = ({activeDate}) => {
                 <button className={styles.confirmFare} onClick={() => handleShowModal(flight)}>
                   Select Fare
                 </button>
-                <p className="avios">Earn 2,866 Avios</p>
                 <ul className="benefits-list">
                   <li>
                     <FaSuitcase /> Checked baggage: {flight.baggage[0].weight} {flight.baggage[0].unit}
@@ -306,9 +300,8 @@ const FlightDetail = ({activeDate}) => {
               </div>
               <div className="col-lg-6 expanded-content">
                 <h2>Business</h2>
-                <p className="price">PKR {(flight.total_fare * 1.5).toLocaleString("en-PK")}</p>
+                <p className="price">Not Available</p>
                 <button className={styles.confirmFare}>Select Fare</button>
-                <p className="avios">Earn 2,866 Avios</p>
                 <ul className="benefits-list">
                   <li>
                     <FaSuitcase /> Checked baggage: {flight.baggage[1].weight} {flight.baggage[1].unit}
@@ -330,9 +323,15 @@ const FlightDetail = ({activeDate}) => {
               <Offcanvas.Title>Flight Details</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <h2 className="fw-bold">{flight.starting_departure_city} to {flight.final_arrival_city}</h2>
-              <p className="text-muted">{formatDate(flight.arrival_date)}</p>
-              {flight.connections.map((connection) => (
+              {selectedFlight && (
+                <>
+                  <h2 className="fw-bold">{selectedFlight.departure_city} to {selectedFlight.arrival_city}</h2>
+                  <p className="text-muted">{formatDate(selectedFlight.arrival_date)}</p>
+                </>
+              )}
+                
+              
+              {selectedFlight && selectedFlight.connections.map((connection) => (
                 <>
                   <div className="flight-schedule-container mt-4">
                     <div className="flight-schedule">
@@ -378,18 +377,23 @@ const FlightDetail = ({activeDate}) => {
             backdrop={false}
           >
             <Modal.Body>
-              <div className="d-flex p-2 justify-content-between">
-                <div className="hstack gap-2">
-                  <span>
-                    <FaSuitcase />
-                  </span>
-                  <div className="vstack gap-2">
-                    <span className="text-muted">Departure selected</span>
-                    <h3>PKR {flight.total_fare}</h3>
+              {selectedFlight && (
+                <>
+                  <div className="d-flex p-2 justify-content-between">
+                    <div className="hstack gap-2">
+                      <span>
+                        <FaSuitcase />
+                      </span>
+                      <div className="vstack gap-2">
+                        <span className="text-muted">Departure selected</span>
+                        <h3>PKR {selectedFlight.total_fare}</h3>
+                      </div>
+                    </div>
+                    <button className={styles.confirmFare} onClick={handleConfirm}>Confirm</button>
                   </div>
-                </div>
-                <button className={styles.confirmFare} onClick={handleConfirm}>Confirm</button>
-              </div>
+                </>
+              )}
+              
             </Modal.Body>
           </Modal>
         </div>

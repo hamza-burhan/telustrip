@@ -1,13 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-const Navbar = ({ isBanner, isFixed }) => {
+const Navbar = ({isFixed }) => {
+  const router = useRouter();
+  const [isMainRoute, setIsMainRoute] = useState(false);
   const menuItems = ["Explore", "Book", "Experience", "Privilege Club"];
   const currencies = [
     { code: "USD", symbol: "$" },
     { code: "EUR", symbol: "€" },
     { code: "GBP", symbol: "£" },
   ];
+
+  useEffect(() => {
+    // Check if the current route is the main route
+    setIsMainRoute(router.pathname === '/');
+}, [router.pathname]);
+  
 
   return (
     <div className={`${isFixed ? "position-fixed w-100" : ""}`}>
@@ -53,7 +63,7 @@ const Navbar = ({ isBanner, isFixed }) => {
         </div>
       </nav>
 
-      <div className={`${isBanner ? "banner" : ""}`}>
+      <div className={`${isMainRoute ? "banner" : ""}`}>
         <nav className="navbar navbar-expand-lg navbar-light">
           <div className="container-fluid">
             <Link href="/">
