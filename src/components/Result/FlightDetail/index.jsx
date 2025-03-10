@@ -179,7 +179,7 @@ const FlightDetail = ({activeDate}) => {
         const formattedDate = formatActiveDate(activeDate);
         try {
           const response = await fetch(
-            `http://127.0.0.1:8000/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${formattedDate}`
+            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${formattedDate}`
           );
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
