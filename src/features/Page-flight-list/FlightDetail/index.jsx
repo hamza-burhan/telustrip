@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/router";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Modal from 'react-bootstrap/Modal';
-import styles from './FlightDetail.module.css';
+import styles from './FlightDetail.module.scss';
 const Economybenefits = [
   {
     text: "Flexibility to make 1 change",
@@ -69,7 +69,7 @@ const FlightPriceCard = ({ label, price, onClick }) => (
   </div>
 );
 
-const FlightDetail = ({activeDate}) => {
+const FlightDetail = ({activeDate, setConfirm}) => {
   const [expanded, setExpanded] = useState(null);
   const expandedRef = useRef(null);
   const router = useRouter();
@@ -116,7 +116,8 @@ const FlightDetail = ({activeDate}) => {
 
             const data = await response.json();
             console.log('Flight confirmed:', data);
-            localStorage.setItem('flightData', JSON.stringify(data));
+            setConfirm(data);
+            // localStorage.setItem('flightData', JSON.stringify(data));
             router.push("/confirm-details");
 
         } catch (error) {

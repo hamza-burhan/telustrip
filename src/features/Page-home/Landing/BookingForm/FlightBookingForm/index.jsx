@@ -97,7 +97,7 @@ const FlightBookingForm = () => {
       return acc;
     }, {});
     router.push({
-      pathname: "/flight-results",
+      pathname: "/flight-list",
       query,
     });
   };

@@ -3,11 +3,13 @@ import styles from './confirm.module.scss';
 import { CiEdit } from "react-icons/ci";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import React, { useRef, useState, useEffect } from "react";
+import { useDataContext } from '../../contexts/DataContext';
 
 
 const ConfirmationPage = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
+    const { confirm } = useDataContext();
     const [formData, setFormData] = useState({
         title: '',
         gender: '',
@@ -20,11 +22,11 @@ const ConfirmationPage = () => {
     const [formErrors, setFormErrors] = useState(false);
     const [selectedFlight, setSelectedFlight] = useState(null);
     useEffect(() => {
-        const flightData = localStorage.getItem('flightData');
+        console.log(" confirm:", confirm)
         if (flightData) {
             setSelectedFlight(JSON.parse(flightData));
         }
-    }, []);
+    }, [confirm]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -111,6 +113,13 @@ const ConfirmationPage = () => {
         setShow(true)
     }
 
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+        return new Intl.DateTimeFormat('en-US', options).format(date);
+      };
+
     return (
         <>
             <div className={styles.content}>
@@ -155,12 +164,12 @@ const ConfirmationPage = () => {
                                 <div className="vstack gap-2 w-100">
                                     <h3>Trip details</h3>
                                     <span className="text-muted">One way trip</span>
-                                    <h3>Lahor to Doha</h3>
-                                    <span className="text-muted">Sat, 8 March 2025</span>
+                                    <h3>{confirm[0].departure_city} to {confirm[0].arrival_city}</h3>
+                                    <span className="text-muted">{formatDate(confirm[0].departure_date)}</span>
                                     <hr className="border-2"></hr>
                                     <div className="w-100 d-flex justify-content-between">
                                         <span>Grand Total</span>
-                                        <span>PKR 388,050.00</span>
+                                        <span>{confirm[0].total_fare}</span>
                                     </div>
                                     <div className="mt-3">
                                         <a
