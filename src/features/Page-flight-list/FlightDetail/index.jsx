@@ -1,6 +1,4 @@
 import Image from "next/image";
-import PlaneIcon from "@/components/Icons/PlaneIcon";
-
 import React, { useRef, useState, useEffect } from "react";
 import {
   FaExchangeAlt,
