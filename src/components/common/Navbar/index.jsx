@@ -20,7 +20,7 @@ const Navbar = ({isFixed }) => {
   
 
   return (
-    <div className={`${isFixed ? "position-fixed w-100" : ""}`}>
+    <div className={`${isFixed ? "w-100" : ""}`}>
       <nav className="navbar navbar-expand-lg p-0 background-color">
         <div className="container-fluid d-flex justify-content-between align-items-center">
           <div className="dropdown">
