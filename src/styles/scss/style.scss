@@ -925,7 +925,7 @@ footer {
     overflow-x: auto;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    height: 170px;
+    min-height: 170px;
     
     .flight-info {
       display: flex;
@@ -966,8 +966,8 @@ footer {
 
     .departure-time,
     .arrival-time {
-      font-size: 20px;
-      font-weight: bold;
+      font-size: 32px;
+      font-weight: 300;
     }
 
     .separator {
@@ -998,24 +998,22 @@ footer {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #666;
 
   .airport-code {
     font-size: 16px;
-    font-weight: bold;
-    color: #000;
+    font-weight: 500;
   }
 
   .stop-duration {
-    font-size: 12px;
-    color: #777;
+    font-size: 16px;
+    font-weight: 500;
   }
 }
 
 .economy-card {
   display: inline-block;
   width: 100%;
-  padding: 16px;
+  padding: 1.2rem;
   cursor: pointer;
   text-align: left;
   background: white;
@@ -1024,15 +1022,14 @@ footer {
   box-shadow: 0 1px 2px rgba(27, 36, 44, 0.12);
 
   .economy-label {
-    font-size: 14px;
-    color: #6b7280;
     margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   .economy-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #000;
+    font-size: 32px;
+    font-weight: 300;
 
     span {
       font-weight: normal;
@@ -1040,16 +1037,17 @@ footer {
   }
 }
 .expanded-content {
+  border: 1px #dbdee8 solid;
   background-color: #fff;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  margin: 0px 10px;
+    padding: 20px;
+
 
   h2 {
-    font-size: 22px;
-    font-weight: bold;
-    color: #4a4a4a;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   h3 {
@@ -1059,10 +1057,8 @@ footer {
   }
 
   .price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin: 10px 0;
+    font-size: 32px;
+    font-weight: 300;
   }
 
   .select-fare-btn {
@@ -1108,4 +1104,28 @@ footer {
 }
 .main-ticket-listing{
   padding: 0rem 2.5rem 2.5rem 2.5rem;
+}
+.justify-content-space-around{
+  justify-content: space-around;
+}
+.purple-color{
+  color: #721d49
+}
+.flight-details-convas{
+  .location{
+    font-size: 2rem;
+    font-weight: 100;
+  }
+  h2{
+    font-size: 2rem;
+    font-weight: 100;
+  }
+  .date{
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .airpot{
+    font-size: 1rem;
+    font-weight: 400;
+  }
 }
