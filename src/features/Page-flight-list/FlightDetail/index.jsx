@@ -1,4 +1,6 @@
 import Image from "next/image";
+import PlaneIcon from "@/components/Icons/PlaneIcon";
+
 import React, { useRef, useState, useEffect } from "react";
 import {
   FaExchangeAlt,
@@ -7,6 +9,8 @@ import {
   FaShoppingBag,
   FaChair,
   FaArrowUp,
+  FaPlane,
+  FaDollarSign,
 } from "react-icons/fa";
 import { useRouter } from "next/router";
 import Offcanvas from 'react-bootstrap/Offcanvas';
@@ -64,7 +68,7 @@ const FlightPriceCard = ({ label, price, onClick }) => (
   <div className="economy-card " onClick={onClick}>
     <p className="economy-label">{label}</p>
     <p className="economy-value">
-      PKR <span>{price}</span>
+      PKR {price}
     </p>
   </div>
 );
@@ -198,9 +202,9 @@ const FlightDetail = ({activeDate, setConfirm}) => {
   }, [router.isReady, activeDate]);
 
   return (
-    <div>
+    <div className="main-ticket-listing">
       <div className="search-results-header">
-        <div className="container">
+        <div className="container-fluid mb-4">
           <div className="content">
             <div className="results-info">
               <h1>{flights.length} results</h1>
@@ -210,193 +214,169 @@ const FlightDetail = ({activeDate, setConfirm}) => {
         </div>
       </div>
 
-      <div className="container">
+      <div className="container-fluid">
       {flights.map((flight, index) => (
-        <div
-          key={index}
-          className={`row flight-container p-6 ${expanded === index ? "expanded" : ""}`}
-        >
-          <div className="col-lg-6 mb-3">
-            <div className="flight-info">
-              <span className="qsuite">{flight.operating_airline}</span>
-              <Image
-                src="/assets/images/info.svg"
-                alt="info-icon"
-                width={12}
-                height={12}
+        <div className="flight-main-section">
+          <div
+            key={index}
+            className={`row flight-container ${expanded === index ? "expanded" : ""}`}
+          >
+            <div className="col-lg-8 p-0 d-flex flex-column justify-content-space-around">
+              <div className="flight-info">
+                <span className="qsuite {flight.operating_airline}">Recommended</span>
+              </div>
+              <div className="flight-schedule-container">
+                <div className="flight-schedule">
+                  <div className="departure-time">{flight.departure_date.split(" ")[1]}</div>
+                  <div className="separator"></div>
+                  <div className="airline-info">
+                    <div  className="purple-color"> <FaPlane /> </div>
+                  </div>
+                  <div className="separator"></div>
+                  <div className="arrival-time">
+                  {flight.arrival_date.split(" ")[1]}<span className="next-day-indicator">+{flight.connections.length}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flight-meta">
+                {flight.connections?.length > 0 && (
+                  <>
+                    <div className="airport-code">{flight.connections[0].departure.airport || "Unknown Airport"}</div>
+                    <div className="stop-duration">{flight.flight_type}, {flight.total_travel_time}</div>
+                    <div className="airport-code">{flight.connections[flight.connections.length - 1].arrival.airport}</div>
+                  </>
+                )}
+              </div>
+
+              <div>
+                <a
+                  href="#"
+                  className="text-black"
+                  onClick={() => handleShow(flight)}
+                >
+                  Flight Details
+                </a>
+              </div>
+            </div>
+
+            {/* Price Cards */}
+            <div className="col-lg-4  d-flex flex-column justify-content-space-around">
+              <FlightPriceCard
+                label="Economy"
+                price={flight.total_fare.toLocaleString("en-PK")}
+                onClick={() => toggleExpand(index)}
               />
             </div>
-            <div className="flight-schedule-container mt-4">
-              <div className="flight-schedule">
-                <div className="departure-time">{flight.departure_date.split(" ")[1]}</div>
-                <div className="separator"></div>
-                <div className="airline-info">
-                  <Image
-                    src="/assets/images/plane.png"
-                    alt="Airline Logo"
-                    width={20}
-                    height={20}
-                    className="airline-logo"
-                  />
-                </div>
-                <div className="separator"></div>
-                <div className="arrival-time">
-                {flight.arrival_date.split(" ")[1]}<span className="next-day-indicator">+{flight.connections.length}</span>
-                </div>
-              </div>
-            </div>
-            <div className="flight-meta">
-              {flight.connections?.length > 0 && (
-                <>
-                  <div className="airport-code">{flight.connections[0].departure.airport || "Unknown Airport"}</div>
-                  <div className="stop-duration">{flight.flight_type}, {flight.total_travel_time}</div>
-                  <div className="airport-code">{flight.connections[flight.connections.length - 1].arrival.airport}</div>
-                </>
-              )}
-            </div>
-
-            <div className="mt-3">
-              <a
-                href="#"
-                className="text-black"
-                onClick={() => handleShow(flight)}
-              >
-                Flight Details
-              </a>
-            </div>
-          </div>
-
-          {/* Price Cards */}
-          <div className="col-lg-6">
-            <FlightPriceCard
-              label="Economy"
-              price={flight.total_fare.toLocaleString("en-PK")}
-              onClick={() => toggleExpand(index)}
-            />
-          </div>
-         
-
-          {/* Expanded Content */}
-          {expanded === index && (
-            <div className="mt-4 col-lg-12 d-flex" ref={expandedRef}>
-              <div className="col-lg-6 expanded-content">
-                <h2>Economy</h2>
-                <p className="price">PKR {flight.total_fare.toLocaleString("en-PK")}</p>
-                <button className={styles.confirmFare} onClick={() => handleShowModal(flight)}>
-                  Select Fare
-                </button>
-                <ul className="benefits-list">
-                  <li>
-                    <FaSuitcase /> Checked baggage: {flight.baggage[0].weight} {flight.baggage[0].unit}
-                  </li>
-                  <li>
-                    <FaSuitcase /> Type: {flight.baggage[0].type}
-                  </li>
-                  {/* {Economybenefits.map((benefit, index) => (
-                    <li key={index}>
-                      {benefit.icon} {benefit.text}
+            {/* Expanded Content */}
+            {expanded === index && (
+              <div className="mt-4 col-lg-12 d-flex p-0" ref={expandedRef}>
+                <div className="col-lg-6">
+                  <div className="expanded-content">
+                  <h2>Economy</h2>
+                  <p className="price">PKR {flight.total_fare.toLocaleString("en-PK")}</p>
+                  <ul className="benefits-list">
+                    <li>
+                    <div  className="purple-color"><FaSuitcase /> </div>
+                       Checked baggage: {flight.baggage[0].weight} {flight.baggage[0].unit}
                     </li>
-                  ))} */}
-                </ul>
-              </div>
-              <div className="col-lg-6 expanded-content">
-                <h2>Business</h2>
-                <p className="price">Not Available</p>
-                <button className={styles.confirmFare}>Select Fare</button>
-                <ul className="benefits-list">
-                  <li>
-                    <FaSuitcase /> Checked baggage: {flight.baggage[1].weight} {flight.baggage[1].unit}
-                  </li>
-                  <li>
-                    <FaSuitcase /> Type: {flight.baggage[1].type}
-                  </li>
-                  {/* {Businessbenefits.map((benefit, index) => (
-                    <li key={index}>
-                      {benefit.icon} {benefit.text}
+                    <li>
+                    <div  className="purple-color"> <FaDollarSign /> </div> Type: {flight.baggage[0].type}
                     </li>
-                  ))} */}
-                </ul>
+                  </ul>
+                  <button className={styles.confirmFare} onClick={() => handleShowModal(flight)}>
+                    Select Fare
+                  </button>
+                  </div>
+                </div>
+                <div className="col-lg-6 ">
+                <div className="expanded-content">
+                  <h2>Business</h2>
+                  <p className="price">Not Available</p>
+                  <ul className="benefits-list">
+                    <li>
+                      <div className="purple-color"><FaSuitcase /> </div> Checked baggage: {flight.baggage[1].weight} {flight.baggage[1].unit}
+                    </li>
+                    <li>
+                      <div className="purple-color"> <FaDollarSign /> </div> Type: {flight.baggage[1].type}
+                    </li>
+                  </ul>
+                  <button className={styles.confirmFare}>Select Fare</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
-          <Offcanvas show={show} onHide={handleClose} placement="end" backdrop={false} style={{width: '500px'}}>
-            <Offcanvas.Header closeButton>
-              <Offcanvas.Title>Flight Details</Offcanvas.Title>
-            </Offcanvas.Header>
-            <Offcanvas.Body>
-              {selectedFlight && (
-                <>
-                  <h2 className="fw-bold">{selectedFlight.departure_city} to {selectedFlight.arrival_city}</h2>
-                  <p className="text-muted">{formatDate(selectedFlight.arrival_date)}</p>
-                </>
-              )}
+            )}
+            <Offcanvas show={show} onHide={handleClose} placement="end" backdrop={false} style={{width: '600px'}}>
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title>Flight Details</Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <div className="flight-details-convas">
+                {selectedFlight && (
+                  <>
+                    <h2><span class="location purple-color">{selectedFlight.departure_city}</span> to <span class="location purple-color">{selectedFlight.arrival_city}</span></h2>
+                    <p className="date">{formatDate(selectedFlight.arrival_date)}</p>
+                  </>
+                )}
+                  
+                {selectedFlight && selectedFlight.connections.map((connection) => (
+                  <>
+                    <div className="flight-schedule-container mt-4">
+                      <div className="flight-schedule">
+                        <div className="departure-time">{connection.departure.time.split(" ")[1]}</div>
+                        <div className="separator"></div>
+                        <div className="airline-info">
+                          <div  className="purple-color"> <FaPlane /> </div>
+                        </div>
+                        <div className="separator"></div>
+                        <div className="arrival-time">
+                          {connection.arrival.time.split(" ")[1]}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flight-meta mt-2">
+                        <>
+                          <div className="airport-code">
+                            {connection.departure.city} Airport ({connection.departure.airport}) 
+                          </div>
+                          <div className="airport-code">{connection.airline}, {connection.duration}</div>
+                          <div className="airport-code">
+                            {connection.arrival.city} Airport ({connection.arrival.airport})
+                          </div>
+                        </>
+                    </div>
+                  </>
+                ))}
+                </div>
+              </Offcanvas.Body>
+            </Offcanvas>
+            <Modal
+              show={showModal}
+              onHide={() => setShowModal(false)}
+              dialogClassName={styles.confirmModal}
+              aria-labelledby="example-custom-modal-styling-title"
+              backdrop={false}
+            >
+              <Modal.Body>
+                {selectedFlight && (
+                  <>
+                    <div className="d-flex p-2 justify-content-between">
+                      <div className="hstack gap-2">
+                        <span>
+                          <FaSuitcase />
+                        </span>
+                        <div className="vstack gap-2">
+                          <span className="text-muted">Departure selected</span>
+                          <h3>PKR {selectedFlight.total_fare}</h3>
+                        </div>
+                      </div>
+                      <button className={styles.confirmFare} onClick={handleConfirm}>Confirm</button>
+                    </div>
+                  </>
+                )}
                 
-              
-              {selectedFlight && selectedFlight.connections.map((connection) => (
-                <>
-                  <div className="flight-schedule-container mt-4">
-                    <div className="flight-schedule">
-                      <div className="departure-time">{connection.departure.time.split(" ")[1]}</div>
-                      <div className="separator"></div>
-                      <div className="airline-info">
-                        <Image
-                          src="/assets/images/plane.png"
-                          alt="Airline Logo"
-                          width={20}
-                          height={20}
-                          className="airline-logo"
-                        />
-                      </div>
-                      <div className="separator"></div>
-                      <div className="arrival-time">
-                        {connection.arrival.time.split(" ")[1]}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flight-meta">
-                      <>
-                        <div className="airport-code vstack gap-2">
-                          {connection.departure.city} 
-                          <span className="text-muted">{connection.departure.city} Airport ({connection.departure.airport} ) </span>
-                        </div>
-                        <div className="stop-duration">{connection.airline}, {connection.duration}</div>
-                        <div className="airport-code vstack gap-2">
-                          {connection.arrival.city} 
-                          <span className="text-muted">{connection.arrival.city} Airport ({connection.arrival.airport})</span>
-                        </div>
-                      </>
-                  </div>
-                </>
-              ))}
-            </Offcanvas.Body>
-          </Offcanvas>
-          <Modal
-            show={showModal}
-            onHide={() => setShowModal(false)}
-            dialogClassName={styles.confirmModal}
-            aria-labelledby="example-custom-modal-styling-title"
-            backdrop={false}
-          >
-            <Modal.Body>
-              {selectedFlight && (
-                <>
-                  <div className="d-flex p-2 justify-content-between">
-                    <div className="hstack gap-2">
-                      <span>
-                        <FaSuitcase />
-                      </span>
-                      <div className="vstack gap-2">
-                        <span className="text-muted">Departure selected</span>
-                        <h3>PKR {selectedFlight.total_fare}</h3>
-                      </div>
-                    </div>
-                    <button className={styles.confirmFare} onClick={handleConfirm}>Confirm</button>
-                  </div>
-                </>
-              )}
-              
-            </Modal.Body>
-          </Modal>
+              </Modal.Body>
+            </Modal>
+          </div>
         </div>
       ))}
       </div>

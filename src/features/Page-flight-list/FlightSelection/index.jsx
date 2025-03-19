@@ -60,7 +60,7 @@ const FlightSelection = ({ activeDate, setActiveDate }) => {
     <div className="flight-selection">
       <h2 className="date">{activeDate}</h2>
       <h1 className="title">
-        Select your departure flight from{" "}
+        Select your departure flight <br></br> from{" "}
         <span className="highlight">{query.fromCity0 ? query.fromCity0.split(' ')[0] : ''}</span> to{" "}
         <span className="highlight">{query.toCity0 ? query.toCity0.split(' ')[0] : ''}</span>
       </h1>

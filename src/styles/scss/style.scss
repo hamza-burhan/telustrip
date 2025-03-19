@@ -8,7 +8,7 @@
 
   --fifth-color: rgb(145, 143, 146);
   --six-color: #222248;
-  --background-color: #f9f8f6;
+  --background-color: #f2f2fa;
   --text-color: #343a40;
   --font-family: "Noto Sans Med", sans-serif;
   --body-color: #f2f3fa;
@@ -636,55 +636,57 @@ footer {
   }
 }
 .flight-selection {
-  background-color: #f7f7f7;
+  background-color: #f2f2fa;
   padding: 2.5rem;
-  display: flex;
+
   flex-direction: column;
   align-items: center;
-  padding-top: 10rem;
 
   .date {
-    color: #666;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    font-weight: 400;
   }
 
   .title {
-    font-size: 1.875rem;
-    font-weight: 300;
-    color: #444;
-    text-align: center;
-
+    font-size: 3rem;
+    font-weight: 100;
+    margin-bottom: 30px;
     .highlight {
       color: #b81d50;
     }
   }
 
   .flight-list {
-    margin-top: 1.5rem;
-    background-color: #fff;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
     display: flex;
-    overflow-x: auto;
-    padding: 1rem;
-    flex-wrap: wrap;
-
+    justify-content: space-between;
+    width: 100%; 
+   
+    background-color: #fff;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
     @media (max-width: 768px) {
       justify-content: center;
     }
   }
 
   .flight-item {
-    padding: 1rem;
-    margin: 0 0.5rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    border-bottom: 4px solid transparent;
+    border-bottom: 2px solid transparent;
     transition: border-color 0.3s;
+    padding-bottom: 24px !important;
+    padding-top: 24px !important;
 
     .flight-date {
-      font-size: 0.875rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 400;
+      margin: 0px;
     }
 
     .flight-price {
@@ -786,7 +788,6 @@ footer {
 
 .search-results-header {
   background-color: rgba(248, 249, 250, 0.5);
-  border-bottom: 1px solid #e9ecef;
   width: 100%;
 
   .container {
@@ -798,6 +799,7 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    background-color: var(--background-color);
 
     @media (min-width: 640px) {
       flex-direction: row;
@@ -808,15 +810,15 @@ footer {
 
   .results-info {
     h1 {
-      font-size: 18px;
+      font-size: 1rem;
       font-weight: 600;
       margin: 0;
-      color: #111827;
+      color: #000000;
     }
 
     p {
       font-size: 14px;
-      color: #6b7280;
+      color: #000;
       margin: 4px 0 0 0;
     }
   }
@@ -913,35 +915,44 @@ footer {
     }
   }
 }
-.flight-container {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1rem;
-  background: var(--white);
-  overflow-x: auto;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-
-  .flight-info {
+.flight-main-section{
+  margin: 1.5rem 0px;
+  .flight-container {
     display: flex;
-    align-items: center;
-    gap: 4px;
+    flex-wrap: wrap;
+    padding: 1.2rem;
+    background: var(--white);
+    overflow-x: auto;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    min-height: 170px;
+    
+    .flight-info {
+      display: flex;
+      align-items: center;
+      gap: 4px;
 
-    .qsuite {
-      font-size: 14px;
+      .qsuite {
+        font-size: 12px;
       font-weight: 600;
       color: #333;
-    }
+      background-color: #ecb0c3;
+      border-radius: 3px;
+      color: #860831;
+      font-weight: 600;
+      padding: 2px 7px;
+      }
 
-    img {
-      width: 12px;
-      height: 12px;
+      img {
+        width: 12px;
+        height: 12px;
+      }
     }
-  }
-  @media (max-width: 768px) {
-    gap: 24px;
+    @media (max-width: 768px) {
+      gap: 24px;
+    }
   }
 }
-
 .flight-schedule-container {
   display: flex;
   flex-direction: column;
@@ -955,8 +966,8 @@ footer {
 
     .departure-time,
     .arrival-time {
-      font-size: 20px;
-      font-weight: bold;
+      font-size: 32px;
+      font-weight: 300;
     }
 
     .separator {
@@ -986,26 +997,23 @@ footer {
 .flight-meta {
   display: flex;
   justify-content: space-between;
-  padding: 2px 20px;
   font-size: 14px;
-  color: #666;
 
   .airport-code {
     font-size: 16px;
-    font-weight: bold;
-    color: #000;
+    font-weight: 500;
   }
 
   .stop-duration {
-    font-size: 12px;
-    color: #777;
+    font-size: 16px;
+    font-weight: 500;
   }
 }
 
 .economy-card {
   display: inline-block;
   width: 100%;
-  padding: 16px;
+  padding: 1.2rem;
   cursor: pointer;
   text-align: left;
   background: white;
@@ -1014,15 +1022,14 @@ footer {
   box-shadow: 0 1px 2px rgba(27, 36, 44, 0.12);
 
   .economy-label {
-    font-size: 14px;
-    color: #6b7280;
     margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   .economy-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: #000;
+    font-size: 32px;
+    font-weight: 300;
 
     span {
       font-weight: normal;
@@ -1030,16 +1037,17 @@ footer {
   }
 }
 .expanded-content {
+  border: 1px #dbdee8 solid;
   background-color: #fff;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  margin: 0px 10px;
+    padding: 20px;
+
 
   h2 {
-    font-size: 22px;
-    font-weight: bold;
-    color: #4a4a4a;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   h3 {
@@ -1049,10 +1057,8 @@ footer {
   }
 
   .price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin: 10px 0;
+    font-size: 32px;
+    font-weight: 300;
   }
 
   .select-fare-btn {
@@ -1094,5 +1100,32 @@ footer {
         height: 20px;
       }
     }
+  }
+}
+.main-ticket-listing{
+  padding: 0rem 2.5rem 2.5rem 2.5rem;
+}
+.justify-content-space-around{
+  justify-content: space-around;
+}
+.purple-color{
+  color: #721d49
+}
+.flight-details-convas{
+  .location{
+    font-size: 2rem;
+    font-weight: 100;
+  }
+  h2{
+    font-size: 2rem;
+    font-weight: 100;
+  }
+  .date{
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .airpot{
+    font-size: 1rem;
+    font-weight: 400;
   }
 }
