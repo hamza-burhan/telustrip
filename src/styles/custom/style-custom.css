@@ -2,8 +2,9 @@
   --dark-blue: #2b2355;
   --primary-color: #f9f8f6;
   --secondary-color: #202044;
-  --third-color: #f25149;
-  --fourth-color: #f5867b;
+  --main-pruple-color:#b81d50;
+  --third-color: #b81d50;
+  --fourth-color: #eca4bc;
   --fifth-color: rgb(145, 143, 146);
   --six-color: #222248;
 
@@ -131,7 +132,7 @@ body {
 .booking-tabs {
   padding: 0.9rem 0.5rem 0.8rem;
   color: var(--secondary-color);
-  background-color: #f1f2f9;
+  background-color: #f2f2fa;
   border-radius: 0px !important;
   font-size: 18px;
   font-weight: 600;
@@ -189,8 +190,8 @@ body {
 
 /* Checked state */
 .form-check-input:checked ~ .form-check-label::before {
-  border-color: var(--dark-blue);
-  background: var(--dark-blue);
+  border-color: var(--main-pruple-color);
+  background: var(--main-pruple-color);
 }
 
 .form-check-input:checked ~ .form-check-label::after {
@@ -210,16 +211,14 @@ body {
   color: var(--third-color);
 }
 .h1 {
-  color: var(--six-color);
+
   font-family: "Libre Baskerville";
   font-size: 50px;
   font-weight: 700;
   font-style: normal;
   text-align: center;
 }
-.form-control:focus {
-  box-shadow: 0 0 0 0.25rem rgb(255 216 214);
-}
+
 
 .light-color-text {
   font-family: var(--font-family);
@@ -227,11 +226,10 @@ body {
   font-style: normal;
   text-align: center;
   font-size: 19px;
-  color: var(--fourth-color);
+  color: var(--main-pruple-color);
   margin: 0px;
 }
 .light-gray-color-text {
-  color: var(--fifth-color);
   font-family: Inter;
   font-size: 21px;
   line-height: 152.381%;

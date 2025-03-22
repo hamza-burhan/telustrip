@@ -10,7 +10,7 @@ const WhyChooseUs = () => {
     },
     {
       icon: "/assets/images/icons/clock.svg",
-      title: "24/7 Customer Support",
+      title: "24/7 Support",
       description: "Our support team is available around the clock.",
     },
     {

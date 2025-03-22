@@ -43,22 +43,24 @@ export const PassengerSelector = () => {
       className="col-lg-4 position-relative passenger-dropdown"
       ref={dropdownRef}
     >
-      <div
-        className="form-control form-control-lg border-0 d-flex align-items-center"
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        style={{ cursor: "pointer" }}
-        title={`${adults} Adult${adults > 1 ? "s" : ""}, ${children} Child${
-          children !== 1 ? "ren" : ""
-        }, ${infants} Infant${
-          infants !== 1 ? "s" : ""
-        } - ${totalPassengers} Passengers`}
-      >
-        <i className="fas fa-user me-2 text-muted"></i>
-        <span className="truncate-text">
-          {adults} Adult{adults > 1 ? "s" : ""}, {children} Child
-          {children !== 1 ? "ren" : ""}, {infants} Infant
-          {infants !== 1 ? "s" : ""} - {totalPassengers} Passengers
-        </span>
+      <div className="date-picker-wrapper position-relative form-floating">
+
+        <div
+          className="form-control form-control-lg border-0 d-flex align-items-center"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          style={{ cursor: "pointer" }}
+          title={`${adults} Adult${adults > 1 ? "s" : ""}, ${children} Child${children !== 1 ? "ren" : ""
+            }, ${infants} Infant${infants !== 1 ? "s" : ""
+            } - ${totalPassengers} Passengers`}
+        >
+          <span className="truncate-text">
+            {adults} Adult{adults > 1 ? "s" : ""}, {children} Child
+            {children !== 1 ? "ren" : ""}, {infants} Infant
+            {infants !== 1 ? "s" : ""} - {totalPassengers} Passengers
+          </span>
+        </div>
+        <label htmlFor="floatingPassengers">Passengers</label>
+
       </div>
 
       {dropdownOpen && (

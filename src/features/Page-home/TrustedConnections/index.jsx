@@ -3,11 +3,12 @@ import Image from "next/image";
 
 const TrustedConnections = () => {
   const partners = [
-    { name: "Google", logo: "/assets/images/logo/google-logo.png" },
-    { name: "Apple", logo: "/assets/images/logo/apple-logo.png" },
-    { name: "Microsoft", logo: "/assets/images/logo/microsoft-logo.png" },
-    { name: "Amazon", logo: "/assets/images/logo/amazon-logo.png" },
-    { name: "Meta", logo: "/assets/images/logo/meta-logo.png" },
+    { name: "PIA", logo: "/assets/images/logo/pia-logo.png" },
+    { name: "Airblue", logo: "/assets/images/logo/airblue-logo.png" },
+    { name: "Airsial", logo: "/assets/images/logo/airsial-logo.png" },
+    { name: "Qatar", logo: "/assets/images/logo/qatar-logo.png" },
+    { name: "Etihad", logo: "/assets/images/logo/etihad-logo.png" },
+    { name: "Flyh Jinna", logo: "/assets/images/logo/flyjinnah-logo.png" },
   ];
 
   // Repeat logos multiple times for smoother looping

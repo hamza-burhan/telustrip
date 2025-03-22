@@ -16,7 +16,7 @@
   }
   
   .customDropdownItem:hover {
-    background-color: #f8f9fa; /* Highlight on hover */
+    background-color: #f8f9fa;
     cursor: pointer;
   }
   
@@ -27,7 +27,7 @@
   }
   
   .customDropdownItem div {
-    font-size: 14px; /* Adjust font size if needed */
+    font-size: 14px;
   }
   
   .textEnd {
@@ -35,3 +35,7 @@
     color: #555;
   }
   
+  .location-dropdown{
+    font-size: 16px;
+    font-weight: 500;
+  }
