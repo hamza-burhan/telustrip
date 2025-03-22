@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const TrustedConnections = () => {
   const partners = [
-    { name: "Google", logo: "/assets/images/logo/google-logo.png" },
+    { name: "Google", logo: "/assets/images/logo/pia-logo.png" },
     { name: "Apple", logo: "/assets/images/logo/apple-logo.png" },
     { name: "Microsoft", logo: "/assets/images/logo/microsoft-logo.png" },
     { name: "Amazon", logo: "/assets/images/logo/amazon-logo.png" },

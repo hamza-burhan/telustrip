@@ -1,6 +1,8 @@
 :root {
   --dark-blue: #2b2355;
+  --text-color:#4a525d;
   --white: #fff;
+  --main-pruple-color:#b81d50;
   --badge-color: #f5867b;
   --dark-badge: #f25149;
   --primary-color: #f9f8f6;
@@ -12,10 +14,14 @@
   --text-color: #343a40;
   --font-family: "Noto Sans Med", sans-serif;
   --body-color: #f2f3fa;
+    --fourth-color: #eca4bc;
 }
 
 .dark-blue {
   color: var(--dark-blue);
+}
+.purple-color{
+  color: var(--main-pruple-color);
 }
 .background-color {
   background-color: var(--background-color);
@@ -93,10 +99,10 @@ body {
 }
 
 footer {
-  background: var(--dark-blue);
-  color: var(--white);
+  background: var(--white);
+  color: var(--text-color);
   .footer-col ul li a {
-    color: var(--white);
+    color: var(--text-color);
     font-family: var(--font-family);
   }
   .footer-col ul li .heading {
@@ -104,7 +110,7 @@ footer {
   }
 }
 .why-choose-us {
-  background-color: var(--badge-color);
+  background-color: var(--main-pruple-color);;
   color: var(--white);
 }
 
@@ -173,7 +179,7 @@ footer {
     bottom: -60px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--dark-blue);
+    background-color: var(--main-pruple-color);
     color: var(--white);
     padding: 10px 20px;
     border-radius: 5px;
@@ -441,16 +447,12 @@ footer {
 
 .passenger-dropdown {
   .form-control {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s ease-in-out;
+   font-size: 17px;
 
     &:hover {
       background-color: #f8f9fa;
     }
+    
   }
 
   .btn-group {
@@ -492,8 +494,6 @@ footer {
 
   .date-picker-input {
     width: 100%;
-    font-size: 12px;
-    padding: 4px;
     border: none;
     border-radius: 8px;
     background-color: #f8f9fa;
@@ -501,9 +501,16 @@ footer {
     transition: all 0.3s ease-in-out;
 
     &:focus {
+      border: 1px solid #373aa8;
+      box-shadow: 0 0 0 0.15rem var(--fourth-color);
       outline: none;
       background-color: #fff;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+    &:focus-within{
+      border: 1px #b81d50 solid !important;
+      border-radius: 8px;
+      box-shadow: 0 0 0 5px #f9dfe7;
+      z-index: 100;
     }
   }
 }
@@ -519,7 +526,7 @@ footer {
   padding: 10px;
   font-size: 16px;
   font-weight: 600;
-  background-color: var(--dark-blue);
+  background-color: var(--main-pruple-color);
   color: var(--white);
   border: none;
   border-radius: 5px;
@@ -532,8 +539,8 @@ footer {
 
 .btn-add-flight {
   background-color: transparent;
-  border: 1px solid var(--dark-badge);
-  color: var(--dark-badge);
+  border: 1px solid var(--main-pruple-color);
+  color: var(--main-pruple-color);
   font-size: 16px;
   font-weight: 600;
   padding: 10px;
@@ -548,7 +555,7 @@ footer {
 }
 
 .search-btn {
-  background-color: var(--dark-blue);
+  background-color: var(--main-pruple-color);
   color: var(--white);
   border: none;
   border-radius: 50px;
@@ -568,8 +575,8 @@ footer {
 }
 
 .active-tab {
-  background-color: var(--dark-blue);
-  color: var(--white) !important;
+  background-color:var(--white) !important;
+  color:  var(--main-pruple-color);
 }
 
 .dropdown-menu {
@@ -1128,4 +1135,23 @@ footer {
     font-size: 1rem;
     font-weight: 400;
   }
+}
+.flight-input{
+  font-size: 17px;
+}
+.form-control:focus-within{
+  border: 1px #b81d50 solid !important;
+  border-radius: 8px;
+  box-shadow: 0 0 0 5px #f9dfe7;
+  z-index: 100;
+}
+.location-dropdown{
+  font-size: 16px;
+  font-weight: 500;
+}
+.nav-tabs .nav-link{
+  border:none
+}
+.padding-nav{
+  padding: 0px 24px !important;
 }

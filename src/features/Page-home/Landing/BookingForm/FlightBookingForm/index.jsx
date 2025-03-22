@@ -9,23 +9,40 @@ import { useRouter } from "next/navigation";
 import airportData from '../../../../../data/airports.json';
 import styles from './FlightBooking.module.css';
 
-
-
 const FlightBookingForm = () => {
   const [flightType, setFlightType] = useState("Return");
-  const [flights, setFlights] = useState([{ from: "", to: "", fromCode: "", toCode: "", departureDate: null  }]);
+  const [flights, setFlights] = useState([{ from: "", to: "", fromCode: "", toCode: "", departureDate: new Date() }]);
   const [dropdownIndex, setDropdownIndex] = useState(null);
   const [filteredAirports, setFilteredAirports] = useState([]);
   const [departureDate, setDepartureDate] = useState(new Date());
   const [showCalendarIndex, setShowCalendarIndex] = useState(null);
   const [dateRange, setDateRange] = useState([
-    { startDate: new Date(), endDate: new Date(), key: "selection" },
+    {
+      startDate: new Date(),
+      endDate: new Date(new Date().setDate(new Date().getDate() + 7)), // Return date defaults to 7 days later
+      key: "selection"
+    },
   ]);
   const router = useRouter();
   const calendarRef = useRef(null);
   const [searchType, setSearchType] = useState("");
   const dropdownRef = useRef(null);
-
+  const getNearestAirport = (latitude, longitude, airportData) => {
+    let nearestAirport = null;
+    let minDistance = Infinity;
+  
+    airportData.forEach((airport) => {
+      const distance = Math.sqrt(
+        Math.pow(airport.lat - latitude, 2) + Math.pow(airport.lon - longitude, 2)
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestAirport = airport;
+      }
+    });
+  
+    return nearestAirport;
+  };
   const handleClickOutside = useCallback((event) => {
     if (calendarRef.current && !calendarRef.current.contains(event.target)) {
       setShowCalendarIndex(null);
@@ -33,6 +50,26 @@ const FlightBookingForm = () => {
   }, []);
 
   useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const nearestAirport = getNearestAirport(latitude, longitude, airportData);
+  
+          if (nearestAirport) {
+            setFlights((prevFlights) => {
+              const updatedFlights = [...prevFlights];
+              updatedFlights[0].from = `${nearestAirport.city} ${nearestAirport.code}`;
+              updatedFlights[0].fromCode = nearestAirport.code;
+              return updatedFlights;
+            });
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        }
+      );
+    }
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownIndex(null);
@@ -52,7 +89,20 @@ const FlightBookingForm = () => {
     if (flightType === "Multi-city" && flights.length === 1) {
       handleAddFlight();
     } else if (flightType === "One way" || flightType === "Return") {
-      setFlights([{ from: "", to: "" }]);
+      setFlights((prevFlights) => {
+        // Keep only the first flight and preserve its departureDate
+        const firstFlight = prevFlights[0] || {};
+        return [
+          {
+            ...firstFlight, // Preserve existing data
+            from: "",
+            to: "",
+            fromCode: "",
+            toCode: "",
+            departureDate: firstFlight.departureDate || new Date(), // Default to today
+          },
+        ];
+      });
     }
   }, [flightType]);
 
@@ -66,17 +116,18 @@ const FlightBookingForm = () => {
 
   const handleCalendarChange = (index, date) => {
     const localDate = new Date(date);
-    const year = localDate.getFullYear();
-    const month = String(localDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-    const day = String(localDate.getDate()).padStart(2, "0");
-
-  const formattedDate = `${year}-${month}-${day}`;
+    const formattedDate = localDate.toISOString().split("T")[0];
     setFlights((prev) => {
       const updatedFlights = [...prev];
-      updatedFlights[index].departureDate = formattedDate;
+      updatedFlights[index].departureDate = date;
       return updatedFlights;
     });
     setDepartureDate(date);
+    setDateRange([{
+      startDate: date,
+      endDate: new Date(date.getTime() + 7 * 24 * 60 * 60 * 1000),
+      key: "selection"
+    }]);
     setShowCalendarIndex(null);
   };
 
@@ -91,7 +142,7 @@ const FlightBookingForm = () => {
     const query = submittedData.reduce((acc, flight, index) => {
       acc[`from${index}`] = flight.from;
       acc[`to${index}`] = flight.to;
-      acc[`departureDate${index}`] = flight.departureDate;
+      acc[`departureDate${index}`] = flight.departureDate?.toISOString() || "";
       acc[`fromCity${index}`] = flight.fromCity;
       acc[`toCity${index}`] = flight.toCity;
       return acc;
@@ -131,6 +182,7 @@ const FlightBookingForm = () => {
     } else {
       setFilteredAirports([]);
     }
+    console.log('filteredAirports', getFormattedDate);
   };
 
   const handleSelectAirport = (index, field, airport) => {
@@ -180,40 +232,39 @@ const FlightBookingForm = () => {
             className="row mb-3 align-items-center border-flight"
             key={index}
           >
-            <div className="col-lg-2 position-relative">
-              <input
-                type="text"
-                className="form-control form-control-lg border-0 flight-input"
-                placeholder="From"
-                value={flight.from}
-                onChange={(e) =>
-                  handleInputChange(index, "from", e.target.value)
-                }
-                onFocus={() => {
-                  setDropdownIndex(index);
-                  setSearchType("from");
-                  setFilteredAirports(airportData.slice(0, 10));
-                }}
-              />
+            <div className="col-lg-2 p-0 position-relative">
+              <div className="form-floating">
+                <input
+                  type="text"
+                  className="form-control form-control-lg border-0 flight-input"
+                  id={`floatingInputFrom-${index}`}
+                  placeholder="From"
+                  value={flight.from}
+                  onChange={(e) => handleInputChange(index, "from", e.target.value)}
+                  onFocus={() => {
+                    setDropdownIndex(index);
+                    setSearchType("from");
+                    setFilteredAirports(airportData.slice(0, 10));
+                  }}
+                />
+                <label htmlFor={`floatingInputFrom-${index}`}>From</label>
+              </div>
               {dropdownIndex === index && searchType === "from" && (
                 <ul className={`dropdown-menu show ${styles.customDropdownMenu}`} ref={dropdownRef}>
                   {filteredAirports.map((airport) => (
                     <li
                       key={airport.code}
                       className={`dropdown-item ${styles.customDropdownItem}`}
-                      onClick={() =>
-                        handleSelectAirport(index, "from", airport)
-                      }
+                      onClick={() => handleSelectAirport(index, "from", airport)}
                     >
                       <div className="d-flex justify-content-between w-100">
                         <div className="d-flex flex-column">
-                          <strong>{airport.city}</strong>
+                          <span className="location-dropdown">{airport.city}</span>
                           <span>{airport.country}</span>
-                           
                         </div>
                         <div className={`d-flex flex-column ${styles.textEnd}`}>
-                          <strong>{airport.code}</strong>
-                          <span>{airport.name}</span> 
+                          <span className="location-dropdown">{airport.code}</span>
+                          <span>{airport.name}</span>
                         </div>
                       </div>
                     </li>
@@ -221,29 +272,33 @@ const FlightBookingForm = () => {
                 </ul>
               )}
             </div>
-
             <div className="col-lg-auto text-center">
               <button
                 type="button"
                 className="btn rounded-circle p-2 swap-btn"
                 onClick={() => handleSwap(index)}
               >
-                <i className="fas fa-exchange-alt dark-blue"></i>
+                <i className="fas fa-exchange-alt purple-color"></i>
               </button>
             </div>
-            <div className="col-lg-2 position-relative">
-              <input
-                type="text"
-                className="form-control form-control-lg border-0 flight-input"
-                placeholder="To"
-                value={flight.to}
-                onChange={(e) => handleInputChange(index, "to", e.target.value)}
-                onFocus={() => {
-                  setDropdownIndex(index);
-                  setSearchType("to");
-                  setFilteredAirports(airportData.slice(0, 10));
-                }}
-              />
+            <div className="col-lg-2 p-0 position-relative">
+              <div className="form-floating">
+                <input
+                  type="text"
+                  className="form-control form-control-lg border-0 flight-input"
+                  id={`floatingInput-${index}`}
+                  placeholder="To"
+                  value={flight.to}
+                  onChange={(e) => handleInputChange(index, "to", e.target.value)}
+                  onFocus={() => {
+                    setDropdownIndex(index);
+                    setSearchType("to");
+                    setFilteredAirports(airportData.slice(0, 10));
+                  }}
+                />
+                <label htmlFor={`floatingInput-${index}`}>To</label>
+              </div>
+
               {dropdownIndex === index && searchType === "to" && (
                 <ul className={`dropdown-menu show ${styles.customDropdownMenu}`} ref={dropdownRef}>
                   {filteredAirports.map((airport) => (
@@ -256,11 +311,10 @@ const FlightBookingForm = () => {
                         <div className="d-flex flex-column">
                           <strong>{airport.city}</strong>
                           <span>{airport.country}</span>
-                          
                         </div>
                         <div className={`d-flex flex-column ${styles.textEnd}`}>
                           <strong>{airport.code}</strong>
-                          <span>{airport.name}</span> 
+                          <span>{airport.name}</span>
                         </div>
                       </div>
                     </li>
@@ -268,10 +322,8 @@ const FlightBookingForm = () => {
                 </ul>
               )}
             </div>
-
             <div className="col-lg-3 d-flex position-relative">
-              <div className="date-picker-wrapper position-relative">
-                <label className="date-picker-label mb-0">Departure</label>
+              <div className="date-picker-wrapper position-relative form-floating">
                 <input
                   type="text"
                   readOnly
@@ -280,34 +332,30 @@ const FlightBookingForm = () => {
                       ? getFormattedDate(flights[index].departureDate, "dd MMM yyyy")
                       : ""
                   }
-                  className="date-picker-input form-control form-control-lg border-0"
+                  className="date-picker-input form-control form-control-lg border-0 flight-input"
+                  id={`floatingDeparture-${index}`}
                   placeholder="Select Date"
                   onClick={() =>
-                    setShowCalendarIndex(
-                      index === showCalendarIndex ? null : index
-                    )
+                    setShowCalendarIndex(index === showCalendarIndex ? null : index)
                   }
                 />
+                <label htmlFor={`floatingDeparture-${index}`}>Departure</label>
               </div>
 
               {flightType === "Return" && (
-                <div className="date-picker-wrapper position-relative">
-                  <label className="date-picker-label mb-0">Return</label>
+                <div className="date-picker-wrapper position-relative form-floating">
                   <input
                     type="text"
                     readOnly
-                    value={getFormattedDate(
-                      dateRange[0].endDate,
-                      "dd MMM yyyy"
-                    )}
-                    className="date-picker-input form-control form-control-lg border-0"
+                    value={getFormattedDate(dateRange[0].endDate, "dd MMM yyyy")}
+                    className="date-picker-input form-control form-control-lg border-0 flight-input"
+                    id={`floatingReturn-${index}`}
                     placeholder="Select Date"
                     onClick={() =>
-                      setShowCalendarIndex(
-                        index === showCalendarIndex ? null : index
-                      )
+                      setShowCalendarIndex(index === showCalendarIndex ? null : index)
                     }
                   />
+                  <label htmlFor={`floatingReturn-${index}`}>Return</label>
                 </div>
               )}
 
@@ -325,7 +373,17 @@ const FlightBookingForm = () => {
                   ) : (
                     <DateRange
                       ranges={dateRange}
-                      onChange={(item) => setDateRange([item.selection])}
+                      onChange={(item) => {
+                        setDateRange([item.selection]);
+                        // Update departure date in flights state
+                        setFlights((prevFlights) => {
+                          const updatedFlights = [...prevFlights];
+                          if (updatedFlights.length > 0) {
+                            updatedFlights[0].departureDate = item.selection.startDate;
+                          }
+                          return updatedFlights;
+                        });
+                      }}
                       minDate={new Date()}
                       rangeColors={["#2b2355"]}
                     />
@@ -341,6 +399,7 @@ const FlightBookingForm = () => {
                 </div>
               )}
             </div>
+
             {index !== 0 && index !== 1 && (
               <div className="col-4">
                 <button

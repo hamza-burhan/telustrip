@@ -26,7 +26,7 @@ export default function Footer() {
         <div className="col-lg-3 footer-col mb-3 d-flex flex-column justify-content-center align-items-center">
           <Image
             className="logo mb-2"
-            src="/assets/images/white.webp"
+            src="/assets/images/dark-logo.png"
             alt="Telus Trip"
             width={100}
             height={50}

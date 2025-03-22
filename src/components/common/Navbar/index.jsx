@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-const Navbar = ({isFixed }) => {
+const Navbar = ({ isFixed }) => {
   const router = useRouter();
   const [isMainRoute, setIsMainRoute] = useState(false);
   const menuItems = ["Explore", "Book", "Experience", "Privilege Club"];
@@ -16,12 +16,12 @@ const Navbar = ({isFixed }) => {
   useEffect(() => {
     // Check if the current route is the main route
     setIsMainRoute(router.pathname === '/');
-}, [router.pathname]);
-  
+  }, [router.pathname]);
+
 
   return (
     <div className={`${isFixed ? "w-100" : ""}`}>
-      <nav className="navbar navbar-expand-lg p-0 background-color">
+      <nav className="navbar navbar-expand-lg p-0 padding-nav background-color">
         <div className="container-fluid d-flex justify-content-between align-items-center">
           <div className="dropdown">
             <button
@@ -42,7 +42,7 @@ const Navbar = ({isFixed }) => {
             </ul>
           </div>
 
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center menu-btn-box">
             <Link
               href="/login"
               className="btn btn-link top-bar-btn text-dark text-decoration-none p-0 pe-2 btn-sm hover-primary"
