@@ -22,7 +22,6 @@ const ConfirmationPage = () => {
     const [formErrors, setFormErrors] = useState(false);
     const [selectedFlight, setSelectedFlight] = useState(null);
     useEffect(() => {
-        console.log(" confirm:", confirm)
         if (flightData) {
             setSelectedFlight(JSON.parse(flightData));
         }
@@ -67,7 +66,10 @@ const ConfirmationPage = () => {
             return;
         }
         setFormErrors(false);
-     
+        if (!selectedFlight) {
+            console.error('Selected flight data is not available.');
+            return;
+        }
         const passengerData = {
             ...formData,
             TicketType: '7TAW', 
@@ -164,12 +166,12 @@ const ConfirmationPage = () => {
                                 <div className="vstack gap-2 w-100">
                                     <h3>Trip details</h3>
                                     <span className="text-muted">One way trip</span>
-                                    <h3>{confirm[0].departure_city} to {confirm[0].arrival_city}</h3>
-                                    <span className="text-muted">{formatDate(confirm[0].departure_date)}</span>
+                                    <h3>{confirm?.[0]?.departure_city || 'Unknown'} to {confirm?.[0]?.arrival_city || 'Unknown'}</h3>
+                                    <span className="text-muted">{confirm?.[0]?.departure_date ? formatDate(confirm[0].departure_date) : 'Date not available'}</span>
                                     <hr className="border-2"></hr>
                                     <div className="w-100 d-flex justify-content-between">
                                         <span>Grand Total</span>
-                                        <span>{confirm[0].total_fare}</span>
+                                        <span>{confirm?.[0]?.total_fare || 'N/A'}</span>
                                     </div>
                                     <div className="mt-3">
                                         <a
