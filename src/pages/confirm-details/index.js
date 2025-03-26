@@ -21,11 +21,7 @@ const ConfirmationPage = () => {
     });
     const [formErrors, setFormErrors] = useState(false);
     const [selectedFlight, setSelectedFlight] = useState(null);
-    useEffect(() => {
-        if (flightData) {
-            setSelectedFlight(JSON.parse(flightData));
-        }
-    }, [confirm]);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
