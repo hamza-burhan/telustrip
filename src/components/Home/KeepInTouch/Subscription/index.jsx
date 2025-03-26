@@ -12,8 +12,7 @@ const Subscription = () => {
         <Image
           src={"/assets/images/subscription-logo.jpg"}
           alt="Background"
-          layout="fill"
-          objectFit="cover"
+          fill style={{ objectFit: "cover" }}
         />
       </div>
       <div className="subscription-content">

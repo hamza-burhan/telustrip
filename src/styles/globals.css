@@ -1,4 +1,4 @@
-@import "./custom/style-custom.css";
+@use "./custom/style-custom.css";
 :root {
   --dark-blue: #2b2355;
   --white: #fff;
