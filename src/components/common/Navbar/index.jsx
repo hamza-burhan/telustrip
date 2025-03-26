@@ -6,7 +6,12 @@ import { useEffect, useState } from 'react';
 const Navbar = ({ isFixed }) => {
   const router = useRouter();
   const [isMainRoute, setIsMainRoute] = useState(false);
-  const menuItems = ["Explore", "Book", "Experience", "Privilege Club"];
+  const menuItems = [
+    { name: "Contact", slug: "contact" },
+    { name: "Book", slug: "book" },
+    { name: "Experience", slug: "experience" },
+    { name: "Privilege Club", slug: "privilege-club" },
+  ];
   const currencies = [
     { code: "USD", symbol: "$" },
     { code: "EUR", symbol: "€" },
@@ -87,10 +92,10 @@ const Navbar = ({ isFixed }) => {
 
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                {menuItems.map((item) => (
-                  <li className="nav-item menu-btn-box" key={item}>
-                    <Link href="#" className="nav-link menu-btn hover-line">
-                      {item}
+                {menuItems.map(({ name, slug }) => (
+                  <li className="nav-item menu-btn-box" key={slug}>
+                    <Link href={`/${slug}`} className="nav-link menu-btn hover-line">
+                      {name}
                     </Link>
                   </li>
                 ))}
