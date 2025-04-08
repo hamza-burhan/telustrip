@@ -4,8 +4,13 @@ const FlightSelection = ({ activeDate, setActiveDate }) => {
   const router = useRouter();
   const { query } = router;
   const [flights, setFlights] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0); // State to handle dynamic index
 
-  const departureDate = query.departureDate0; 
+  const getQueryValue = (keyPrefix, index) => query[`${keyPrefix}${index}`] || '';
+
+  const departureDate = getQueryValue('departureDate', currentIndex);
+  const fromCity = getQueryValue('fromCity', currentIndex);
+  const toCity = getQueryValue('toCity', currentIndex);
 
   // Function to format the date
   const formatDate = (dateString) => {
@@ -15,7 +20,6 @@ const FlightSelection = ({ activeDate, setActiveDate }) => {
     return new Intl.DateTimeFormat('en-US', options).format(date);
   };
   const formattedDate = formatDate(departureDate);
-
 
   const generateDateArray = (baseDate, daysBefore, daysAfter) => {
     const base = new Date(baseDate);
@@ -44,39 +48,50 @@ const FlightSelection = ({ activeDate, setActiveDate }) => {
   };
 
   useEffect(() => {
-    if (query.departureDate0) {
-      setActiveDate(formatDate(new Date(query.departureDate0)));
-      const generatedFlights = generateDateArray(query.departureDate0, 3, 3);
+    if (departureDate) {
+      setActiveDate(formattedDate);
+      const generatedFlights = generateDateArray(departureDate, 3, 3);
       setFlights(generatedFlights);
     }
-  }, [query.departureDate0]);
+  }, [departureDate, currentIndex]);
 
   const handleDateClick = (date) => {
     setActiveDate(date);
   };
 
-  
+  const handleIndexChange = (index) => {
+    setCurrentIndex(index);
+    setActiveDate('');
+  };
+
   return (
     <div className="flight-selection">
       <h2 className="date">{activeDate}</h2>
       <h1 className="title">
-        Select your departure flight <br></br> from{" "}
-        <span className="highlight">{query.fromCity0 ? query.fromCity0.split(' ')[0] : ''}</span> to{" "}
-        <span className="highlight">{query.toCity0 ? query.toCity0.split(' ')[0] : ''}</span>
+        Select your departure flight <br />
+        from <span className="highlight">{fromCity.split(' ')[0]}</span> to{' '}
+        <span className="highlight">{toCity.split(' ')[0]}</span>
       </h1>
       <div className="flight-list">
         {flights.map((flight, index) => (
           <div
             key={index}
-            className={`flight-item ${flight.date === activeDate ? "active" : ""}`}
+            className={`flight-item ${flight.date === activeDate ? 'active' : ''}`}
             onClick={() => handleDateClick(flight.date)}
           >
             <p className="flight-date">{flight.date}</p>
           </div>
         ))}
       </div>
+      {/* <div className="index-navigation">
+        <button disabled={currentIndex <= 0} onClick={() => handleIndexChange(currentIndex - 1)}>
+          Previous Flight
+        </button>
+        <button onClick={() => handleIndexChange(currentIndex + 1)}>Next Flight</button>
+      </div> */}
     </div>
   );
 };
+
 
 export default FlightSelection;

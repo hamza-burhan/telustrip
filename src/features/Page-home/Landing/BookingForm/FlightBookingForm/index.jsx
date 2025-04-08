@@ -11,7 +11,7 @@ import styles from './FlightBooking.module.css';
 
 const FlightBookingForm = () => {
   const [flightType, setFlightType] = useState("Return");
-  const [flights, setFlights] = useState([{ from: "", to: "", fromCode: "", toCode: "", departureDate: new Date() }]);
+  const [flights, setFlights] = useState([{ from: "", to: "", fromCode: "", toCode: "", departureDate: new Date(), type: '' }]);
   const [dropdownIndex, setDropdownIndex] = useState(null);
   const [filteredAirports, setFilteredAirports] = useState([]);
   const [departureDate, setDepartureDate] = useState(new Date());
@@ -132,21 +132,45 @@ const FlightBookingForm = () => {
   };
 
   const handleSearchClick = () => {
-    const submittedData = flights.map((flight) => ({
-      from: flight.fromCode,
-      to: flight.toCode,
-      departureDate: flight.departureDate,
-      fromCity: flight.from,
-      toCity: flight.to,
-    }));
-    const query = submittedData.reduce((acc, flight, index) => {
-      acc[`from${index}`] = flight.from;
-      acc[`to${index}`] = flight.to;
-      acc[`departureDate${index}`] = flight.departureDate?.toISOString() || "";
-      acc[`fromCity${index}`] = flight.fromCity;
-      acc[`toCity${index}`] = flight.toCity;
-      return acc;
-    }, {});
+    const submittedData = flights.map((flight) => {
+      
+      return {
+        from: flight.fromCode,
+        to: flight.toCode,
+        departureDate: flight.departureDate,
+        fromCity: flight.from,
+        toCity: flight.to,
+        
+      }
+    })
+
+    if (flightType === "Return") {
+      // Add a reversed flight for the return trip
+      const returnFlight = {
+        from: flights[0].toCode, // Reverse 'from' and 'to'
+        to: flights[0].fromCode,
+        departureDate: dateRange[0].endDate, // Ensure you have a returnDate property
+        fromCity: flights[0].to,
+        toCity: flights[0].from,
+      };
+      submittedData.push(returnFlight);
+    }
+
+    console.log(" submittedData:", submittedData)
+    const generateQuery = (submittedData, flightType) => {
+      return submittedData.reduce((acc, flight, index) => {
+        acc[`from${index}`] = flight.from;
+        acc[`to${index}`] = flight.to;
+        acc[`departureDate${index}`] = flight.departureDate?.toISOString() || "";
+        acc[`fromCity${index}`] = flight.fromCity;
+        acc[`toCity${index}`] = flight.toCity;
+        acc['type'] = flightType; // Explicitly use the passed flightType
+        return acc;
+      }, {});
+    };
+    
+
+    const query = generateQuery(submittedData, flightType);
     router.push({
       pathname: "/flight-list",
       query,

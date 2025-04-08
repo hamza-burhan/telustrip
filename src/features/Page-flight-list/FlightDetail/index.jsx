@@ -80,6 +80,9 @@ const FlightDetail = ({activeDate, setConfirm}) => {
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  const [currentStep, setCurrentStep] = useState(0);
+  const [confirmedFlights, setConfirmedFlights] = useState([]);
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
@@ -90,54 +93,57 @@ const FlightDetail = ({activeDate, setConfirm}) => {
   // changes by abdul start
   const handleConfirm = async () => {
     setShowModal(false);
-    
+  
     if (selectedFlight) {
-        console.log('Confirming flight:', selectedFlight);
-
-        try {
-            const response = await fetch('https://telustrip.tutorialsbites.com/api/sabre/revalidate-flight', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    DepartureDateTime: selectedFlight.departure_date, 
-                    ArrivalDateTime: selectedFlight.arrival_date,
-                    OriginLocationCode: selectedFlight.departure_airport,
-                    DestinationLocationCode: selectedFlight.arrival_airport,
-                    ClassOfService: 'Y',
-                    FlightNumber: selectedFlight.flight_number,
-                    FlightType: 'A',
-                    AirlineCode: selectedFlight.airline
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Flight confirmed:', data);
-            setConfirm(data);
-            // localStorage.setItem('flightData', JSON.stringify(data));
-            router.push("/confirm-details");
-
-        } catch (error) {
-            console.error('Error confirming flight:', error);
+      try {
+        const response = await fetch('https://telustrip.tutorialsbites.com/api/sabre/revalidate-flight', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            DepartureDateTime: selectedFlight.departure_date,
+            ArrivalDateTime: selectedFlight.arrival_date,
+            OriginLocationCode: selectedFlight.departure_airport,
+            DestinationLocationCode: selectedFlight.arrival_airport,
+            ClassOfService: 'Y',
+            FlightNumber: selectedFlight.flight_number,
+            FlightType: 'A',
+            AirlineCode: selectedFlight.airline,
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
         }
+  
+        const data = await response.json();
+
+        setConfirmedFlights((prev) => [...prev, data]);
+        
+
+        if (currentStep === flights.length - 1) {
+          setConfirm(data);
+          router.push('/confirm-details');
+        } else {
+          setCurrentStep((prev) => prev + 1);
+          setSelectedFlight(null); 
+        }
+      } catch (error) {
+        console.error('Error confirming flight:', error);
+      }
     }
-};
+  };
+  
 
   // changes by abdul end 
 
 
   const handleShowModal = (flight) => {
-    console.log(" flight:", flight)
     setSelectedFlight(flight);
     setShowModal(true);
   }
   const handleShow = (flight) => {
-    console.log(" flight:", flight)
     setSelectedFlight(flight);
     setShow(true);
   } 
@@ -173,17 +179,18 @@ const FlightDetail = ({activeDate, setConfirm}) => {
   useEffect(() => {
     if (router.isReady && activeDate) {
       const flightData = Object.keys(router.query)
-      .filter((key) => key.startsWith("from"))
-      .map((key, index) => ({
-        from: router.query[`from${index}`],
-        to: router.query[`to${index}`],
-        departureDate: router.query[`departureDate${index}`],
-      }));
+        .filter((key) => key.startsWith("from"))
+        .map((key, index) => ({
+          from: router.query[`from${index}`],
+          to: router.query[`to${index}`],
+          departureDate: router.query[`departureDate${index}`],
+        }));
+  
       const fetchFlights = async () => {
         const formattedDate = formatActiveDate(activeDate);
         try {
           const response = await fetch(
-            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[0].from}&destination=${flightData[0].to}&departure_date=${formattedDate}`
+            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[currentStep].from}&destination=${flightData[currentStep].to}&departure_date=${formattedDate}`
           );
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
@@ -191,13 +198,14 @@ const FlightDetail = ({activeDate, setConfirm}) => {
           const data = await response.json();
           setFlights(data);
         } catch (err) {
-        } 
+          console.error(err);
+        }
       };
   
       fetchFlights();
     }
-    
-  }, [router.isReady, activeDate]);
+  }, [router.isReady, activeDate, currentStep]);
+  
 
   return (
     <div className="main-ticket-listing">
