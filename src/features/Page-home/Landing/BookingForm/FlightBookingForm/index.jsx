@@ -27,6 +27,20 @@ const FlightBookingForm = () => {
   const calendarRef = useRef(null);
   const [searchType, setSearchType] = useState("");
   const dropdownRef = useRef(null);
+  const [passengerCount, setPassengerCount] = useState({
+    adults: 1,
+    children: 0,
+    infants: 0,
+  });
+
+
+
+  const handlePassengerConfirm = (count) => {
+    setPassengerCount(count);
+  };
+
+
+
   const getNearestAirport = (latitude, longitude, airportData) => {
     let nearestAirport = null;
     let minDistance = Infinity;
@@ -156,7 +170,6 @@ const FlightBookingForm = () => {
       submittedData.push(returnFlight);
     }
 
-    console.log(" submittedData:", submittedData)
     const generateQuery = (submittedData, flightType) => {
       return submittedData.reduce((acc, flight, index) => {
         acc[`from${index}`] = flight.from;
@@ -164,7 +177,10 @@ const FlightBookingForm = () => {
         acc[`departureDate${index}`] = flight.departureDate?.toISOString() || "";
         acc[`fromCity${index}`] = flight.fromCity;
         acc[`toCity${index}`] = flight.toCity;
-        acc['type'] = flightType; // Explicitly use the passed flightType
+        acc['type'] = flightType;
+        acc['ADT'] = passengerCount.adults,
+        acc['CHD'] = passengerCount.children,
+        acc['INF'] = passengerCount.infants
         return acc;
       }, {});
     };
@@ -206,7 +222,6 @@ const FlightBookingForm = () => {
     } else {
       setFilteredAirports([]);
     }
-    console.log('filteredAirports', getFormattedDate);
   };
 
   const handleSelectAirport = (index, field, airport) => {
@@ -436,7 +451,7 @@ const FlightBookingForm = () => {
               </div>
             )}
 
-            {index === 0 && <PassengerSelector />}
+            {index === 0 && <PassengerSelector onConfirm={handlePassengerConfirm} />}
           </div>
         ))}
 

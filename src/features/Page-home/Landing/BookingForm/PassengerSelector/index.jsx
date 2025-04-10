@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export const PassengerSelector = () => {
+export const PassengerSelector = ({ onConfirm }) => {
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
@@ -31,6 +31,7 @@ export const PassengerSelector = () => {
     setChildren(tempChildren);
     setInfants(tempInfants);
     setDropdownOpen(false);
+    onConfirm({ adults: tempAdults, children: tempChildren, infants: tempInfants });
   };
 
   useEffect(() => {

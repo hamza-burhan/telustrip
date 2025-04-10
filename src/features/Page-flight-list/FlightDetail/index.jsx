@@ -81,6 +81,8 @@ const FlightDetail = ({activeDate, setConfirm}) => {
   const [showModal, setShowModal] = useState(false);
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [steps, setSteps] = useState([]);
+
   const [confirmedFlights, setConfirmedFlights] = useState([]);
 
   const [show, setShow] = useState(false);
@@ -121,8 +123,8 @@ const FlightDetail = ({activeDate, setConfirm}) => {
 
         setConfirmedFlights((prev) => [...prev, data]);
         
-
-        if (currentStep === flights.length - 1) {
+        if (currentStep === steps.length - 1) {
+          
           setConfirm(data);
           router.push('/confirm-details');
         } else {
@@ -176,6 +178,25 @@ const FlightDetail = ({activeDate, setConfirm}) => {
     return new Intl.DateTimeFormat('en-US', options).format(date);
   };
 
+
+  useEffect(() => {
+    if (router.isReady) {
+      const query = router.query;
+
+      const flightSteps = Object.keys(query)
+      .filter((key) => key.startsWith("from"))
+      .map((key, index) => ({
+        from: query[`from${index}`],
+        to: query[`to${index}`],
+        departureDate: query[`departureDate${index}`],
+      }))
+      .filter((step) => step.from && step.to && step.departureDate);
+
+
+      setSteps(flightSteps);
+    }
+  }, [router.isReady]);
+
   useEffect(() => {
     if (router.isReady && activeDate) {
       const flightData = Object.keys(router.query)
@@ -185,12 +206,17 @@ const FlightDetail = ({activeDate, setConfirm}) => {
           to: router.query[`to${index}`],
           departureDate: router.query[`departureDate${index}`],
         }));
-  
+
+      let flight_type = '' 
+      if(router.query.type == 'One way') flight_type = 'one-way'
+      else if(router.query.type == 'Return') flight_type = 'return'
+      else if(router.query.type == 'Multi-city') flight_type = 'multi-city'
+
       const fetchFlights = async () => {
         const formattedDate = formatActiveDate(activeDate);
         try {
           const response = await fetch(
-            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[currentStep].from}&destination=${flightData[currentStep].to}&departure_date=${formattedDate}`
+            `https://telustrip.tutorialsbites.com/api/sabre/flights?origin=${flightData[currentStep].from}&destination=${flightData[currentStep].to}&departure_date=${formattedDate}&type=${flight_type}&ADT=${router.query.ADT}&CHD=${router.query.CHD}&INF=${router.query.INF}`
           );
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
