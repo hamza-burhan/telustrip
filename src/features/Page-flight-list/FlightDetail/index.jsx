@@ -97,22 +97,28 @@ const FlightDetail = ({activeDate, setConfirm}) => {
     setShowModal(false);
   
     if (selectedFlight) {
+
+      const flightDetails = {
+        DepartureDateTime: selectedFlight.departure_date,
+        ArrivalDateTime: selectedFlight.arrival_date,
+        OriginLocationCode: selectedFlight.departure_airport,
+        DestinationLocationCode: selectedFlight.arrival_airport,
+        ClassOfService: 'Y',
+        FlightNumber: selectedFlight.flight_number,
+        FlightType: 'A',
+        AirlineCode: selectedFlight.airline,
+      };
+
+      const storedFlights = JSON.parse(localStorage.getItem('selectedFlights')) || [];
+      storedFlights.push(flightDetails);
+      localStorage.setItem('selectedFlights', JSON.stringify(storedFlights));
       try {
         const response = await fetch('https://telustrip.tutorialsbites.com/api/sabre/revalidate-flight', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            DepartureDateTime: selectedFlight.departure_date,
-            ArrivalDateTime: selectedFlight.arrival_date,
-            OriginLocationCode: selectedFlight.departure_airport,
-            DestinationLocationCode: selectedFlight.arrival_airport,
-            ClassOfService: 'Y',
-            FlightNumber: selectedFlight.flight_number,
-            FlightType: 'A',
-            AirlineCode: selectedFlight.airline,
-          }),
+          body: JSON.stringify(storedFlights),
         });
   
         if (!response.ok) {
@@ -121,9 +127,11 @@ const FlightDetail = ({activeDate, setConfirm}) => {
   
         const data = await response.json();
 
+
         setConfirmedFlights((prev) => [...prev, data]);
         
         if (currentStep === steps.length - 1) {
+          localStorage.removeItem('selectedFlights');
           
           setConfirm(data);
           router.push('/confirm-details');
@@ -136,6 +144,19 @@ const FlightDetail = ({activeDate, setConfirm}) => {
       }
     }
   };
+
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      localStorage.removeItem('selectedFlights');
+    };
+  
+    router.events.on('routeChangeStart', handleRouteChange);
+  
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events]);
   
 
   // changes by abdul end 
